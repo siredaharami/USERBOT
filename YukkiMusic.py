@@ -304,8 +304,6 @@ async def add_served_user(user_id: int):
     return await usersdb.insert_one({"user_id": user_id})
 
 
-#ping
-
 @app.on_message(filters.command("ping", prefixes=["/", "!", "."]) & filters.user(OWNER_ID))
 async def check_sping(client, message):
     start = datetime.now()
@@ -315,24 +313,52 @@ async def check_sping(client, message):
     await m.edit(f"**🤖 Pinged...!!\nLatency:** `{ms}` ms")
 
 #start msg 
-PHONE_NUMBER_TEXT = (
-    "๏ ʜᴇʏ, ʜᴏᴡ ᴀʀᴇ ʏᴏᴜ ɪ ᴀᴍ ɴᴇᴡ ᴜꜱᴇʀʙᴏᴛ ғᴏʀ ᴛᴇʟᴇɢʀᴀᴍ ɢʀᴏᴜᴘs + ᴄʜᴀɴɴᴇʟs ᴠᴄ.\n\n🎧 ᴘʟᴀʏ + ᴠᴘʟᴀʏ + ᴄᴘʟᴀʏ + ᴄᴠᴘʟᴀʏ 🎧\n\n➥ sᴜᴘᴘᴏʀᴛᴇᴅ ᴡᴇʟᴄᴏᴍᴇ - ʟᴇғᴛ ɴᴏᴛɪᴄᴇ, ᴛᴀɢᴀʟʟ, ᴠᴄᴛᴀɢ, ʙᴀɴ - ᴍᴜᴛᴇ, sʜᴀʏʀɪ, ʟᴜʀɪᴄs, sᴏɴɢ - ᴠɪᴅᴇᴏ ᴅᴏᴡɴʟᴏᴀᴅ, ᴇᴛᴄ... \n\n🔐ᴜꜱᴇ » soon ᴛᴏ ᴄʜᴇᴄᴋ ғᴇᴀᴛᴜʀᴇs. 💞\n\n [✰ 𝖮ᴡ፝֠֩𝛈𝛆ʀ  ✰](https://t.me/HEROKUBIN_01)"
-)
 
 @bot.on_message(cdx(["start"]) & pyrofl.private)
-async def hello(client: app, message):
-    buttons = [
-           [
-                InlineKeyboardButton("✘ ᴜᴘᴅᴀᴛᴇꜱ ᴄʜᴀɴɴᴇʟ", url="https://t.me/HEROKUBIN_01"),
-            ],
-            [
-                InlineKeyboardButton("✘ ꜱᴜᴘᴘᴏʀᴛ ɢʀᴏᴜᴘ", url="https://t.me/PBX_CHAT"),
-            ],
-            ]
-    reply_markup = InlineKeyboardMarkup(buttons)
-    
-    await client.send_photo(message.chat.id, START_IMAGE_URL = , caption=PHONE_NUMBER_TEXT, reply_markup=reply_markup)
+async def start_message_private(client, message):
+    user_id = message.from_user.id
+    mention = message.from_user.mention
+    await add_served_user(user_id)
+    if len(message.text.split()) > 1:
+        name = message.text.split(None, 1)[1]
+        if name[0:5] == "verify":
+            pass
+            
+    else:
+        caption = f"""
+๏ ʜᴇʏ, ʜᴏᴡ ᴀʀᴇ ʏᴏᴜ ɪ ᴀᴍ ɴᴇᴡ ᴜꜱᴇʀʙᴏᴛ ғᴏʀ ᴛᴇʟᴇɢʀᴀᴍ ɢʀᴏᴜᴘs + ᴄʜᴀɴɴᴇʟs ᴠᴄ.
 
+🎧 ᴘʟᴀʏ + ᴠᴘʟᴀʏ + ᴄᴘʟᴀʏ + ᴄᴠᴘʟᴀʏ 🎧
+
+➥ sᴜᴘᴘᴏʀᴛᴇᴅ ᴡᴇʟᴄᴏᴍᴇ - ʟᴇғᴛ ɴᴏᴛɪᴄᴇ, ᴛᴀɢᴀʟʟ, ᴠᴄᴛᴀɢ, ʙᴀɴ - ᴍᴜᴛᴇ, sʜᴀʏʀɪ, ʟᴜʀɪᴄs, sᴏɴɢ - ᴠɪᴅᴇᴏ ᴅᴏᴡɴʟᴏᴀᴅ, ᴇᴛᴄ... 
+
+🔐ᴜꜱᴇ » soon ᴛᴏ ᴄʜᴇᴄᴋ ғᴇᴀᴛᴜʀᴇs. 💞⦿"""
+        buttons = InlineKeyboardMarkup(
+            [
+                [
+            InlineKeyboardButton(text="❍ᴡɴᴇꝛ", url="https://t.me/II_BAD_BABY_II"),
+            InlineKeyboardButton(text="ᴜᴘᴅᴧᴛᴇ", url="https://t.me/HEROKUBIN_01"),
+                ],
+            ]
+        )
+        if START_IMAGE_URL:
+            try:
+                return await message.reply_photo(
+                    photo=START_IMAGE_URL, caption=caption, reply_markup=buttons
+                )
+            except Exception as e:
+                LOGGER.info(f"🚫 Start Image Error: {e}")
+                try:
+                    return await message.reply_text(text=caption, reply_markup=buttons)
+                except Exception as e:
+                    LOGGER.info(f"🚫 Start Error: {e}")
+                    return
+        else:
+            try:
+                return await message.reply_text(text=caption, reply_markup=buttons)
+            except Exception as e:
+                LOGGER.info(f"🚫 Start Error: {e}")
+                return
 
 
 # Thumbnail Generator Area
