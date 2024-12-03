@@ -8,6 +8,7 @@ from time import strftime
 from functools import partial
 from dotenv import load_dotenv
 from datetime import datetime
+from pyrogram import filters
 from typing import Union, List, Pattern
 from logging.handlers import RotatingFileHandler
 
