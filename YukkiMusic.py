@@ -159,8 +159,6 @@ async def main():
     # Sending Start Message
     start_message = (
         "🌀 **Userbot Started Successfully!**\n"
-        "📅 **Date:** `{}`\n"
-        "⏰ **Time:** `{}`\n"
         "⚡ **Powered By:** [Your Userbot](https://github.com/your-repo-link)"
     ).format(
         datetime.now().strftime("%Y-%m-%d"),
@@ -285,12 +283,12 @@ async def add_served_user(user_id: int):
 #ping
 
 @app.on_message(filters.command("ping", prefixes=["/", "!", "."]) & filters.user(OWNER_ID))
-async def ping(client, message):
-    start_time = datetime.now()
-    reply = await message.reply("🏓 **Pong!**")
-    end_time = datetime.now()
-    ping_time = (end_time - start_time).microseconds / 1000  # Convert to milliseconds
-    await reply.edit(f"🏓 **Pong!**\n💡 **Response Time:** `{ping_time} ms`")
+async def check_sping(client, message):
+    start = datetime.now()
+    end = datetime.now()
+    ms = (end - start).microseconds / 1000
+    m = await message.reply_text("**🤖 Ping...!!**")
+    await m.edit(f"**🤖 Pinged...!!\nLatency:** `{ms}` ms")
 
 if __name__ == "__main__":
     loop.run_until_complete(main())
