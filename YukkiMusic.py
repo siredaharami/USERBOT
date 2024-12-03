@@ -69,6 +69,8 @@ if os.path.exists("Config.env"):
 
 API_ID = int(getenv("API_ID", 0))
 API_HASH = getenv("API_HASH", None)
+BOT_TOKEN = getenv("BOT_TOKEN", None)
+LOG_GROUP_ID = int(getenv("LOG_GROUP_ID", 0))
 STRING_SESSION = getenv("STRING_SESSION", None)
 MONGO_DB_URL = getenv("MONGO_DB_URL", None)
 OWNER_ID = int(getenv("OWNER_ID", 0))
@@ -98,6 +100,12 @@ app = Client(
     api_id=API_ID,
     api_hash=API_HASH,
     session_string=str(STRING_SESSION),
+)
+bot = Client(
+    name="Bot",
+    api_id=API_ID,
+    api_hash=API_HASH,
+    bot_token=BOT_TOKEN,
 )
 
 call = PyTgCalls(app)
@@ -170,9 +178,25 @@ async def main():
         await app.send_message(OWNER_ID, start_message)
         LOGGER.info("✅ Start message sent to the owner.")
     except Exception as e:
-        LOGGER.info(f"🚫 Failed to send start message: {e}")
-
-    LOGGER.info("Userbot started successfully.")
+        pass
+    if LOG_GROUP_ID != 0:
+        try:
+            await app.send_message(LOG_GROUP_ID, "🦋 ᴀꜱꜱɪꜱᴛᴀɴᴛ ꜱᴛᴀʀᴛᴇᴅ..")
+        except Exception:
+            pass
+    LOGGER.info("ᴀꜱꜱɪꜱᴛᴀɴᴛ ꜱᴛᴀʀᴛᴇᴅ.")
+    try:
+        await bot.start()
+    except Exception as e:
+        LOGGER.info(f"🚫 ʙᴏᴛ ᴇʀʀᴏʀ {e}")
+        sys.exit()
+    if LOG_GROUP_ID != 0:
+        try:
+            await bot.send_message(LOG_GROUP_ID, "🤖 ʙᴏᴛ ꜱᴛᴀʀᴛᴇᴅ.")
+        except Exception:
+            pass
+    LOGGER.info("✅ ʙᴏᴛ ꜱᴛᴀʀᴛᴇᴅ.")
+    
     await idle()
 
 
