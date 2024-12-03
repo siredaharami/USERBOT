@@ -290,9 +290,6 @@ async def ping(client, message):
     end_time = datetime.now()
     ping_time = (end_time - start_time).microseconds / 1000  # Convert to milliseconds
     await reply.edit(f"🏓 **Pong!**\n💡 **Response Time:** `{ping_time} ms`")
-    except:
-            pass
-
 
 if __name__ == "__main__":
     loop.run_until_complete(main())
