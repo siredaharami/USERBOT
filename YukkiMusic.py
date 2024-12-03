@@ -314,6 +314,26 @@ async def check_sping(client, message):
     m = await message.reply_text("**🤖 Ping...!!**")
     await m.edit(f"**🤖 Pinged...!!\nLatency:** `{ms}` ms")
 
+#start msg 
+PHONE_NUMBER_TEXT = (
+    "๏ ʜᴇʏ, ʜᴏᴡ ᴀʀᴇ ʏᴏᴜ ɪ ᴀᴍ ɴᴇᴡ ᴜꜱᴇʀʙᴏᴛ ғᴏʀ ᴛᴇʟᴇɢʀᴀᴍ ɢʀᴏᴜᴘs + ᴄʜᴀɴɴᴇʟs ᴠᴄ.\n\n🎧 ᴘʟᴀʏ + ᴠᴘʟᴀʏ + ᴄᴘʟᴀʏ + ᴄᴠᴘʟᴀʏ 🎧\n\n➥ sᴜᴘᴘᴏʀᴛᴇᴅ ᴡᴇʟᴄᴏᴍᴇ - ʟᴇғᴛ ɴᴏᴛɪᴄᴇ, ᴛᴀɢᴀʟʟ, ᴠᴄᴛᴀɢ, ʙᴀɴ - ᴍᴜᴛᴇ, sʜᴀʏʀɪ, ʟᴜʀɪᴄs, sᴏɴɢ - ᴠɪᴅᴇᴏ ᴅᴏᴡɴʟᴏᴀᴅ, ᴇᴛᴄ... \n\n🔐ᴜꜱᴇ » soon ᴛᴏ ᴄʜᴇᴄᴋ ғᴇᴀᴛᴜʀᴇs. 💞\n\n [✰ 𝖮ᴡ፝֠֩𝛈𝛆ʀ  ✰](https://t.me/HEROKUBIN_01)"
+)
+
+@bot.on_message(cdx(["start"]) & pyrofl.private)
+async def hello(client: app, message):
+    buttons = [
+           [
+                InlineKeyboardButton("✘ ᴜᴘᴅᴀᴛᴇꜱ ᴄʜᴀɴɴᴇʟ", url="https://t.me/HEROKUBIN_01"),
+            ],
+            [
+                InlineKeyboardButton("✘ ꜱᴜᴘᴘᴏʀᴛ ɢʀᴏᴜᴘ", url="https://t.me/PBX_CHAT"),
+            ],
+            ]
+    reply_markup = InlineKeyboardMarkup(buttons)
+    await client.send_photo(message.chat.id, START_IMAGE_URL = , caption=PHONE_NUMBER_TEXT, reply_markup=reply_markup)
+
+
+
 # Thumbnail Generator Area
 
 
