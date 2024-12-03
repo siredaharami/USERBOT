@@ -330,6 +330,7 @@ async def hello(client: app, message):
             ],
             ]
     reply_markup = InlineKeyboardMarkup(buttons)
+    
     await client.send_photo(message.chat.id, START_IMAGE_URL = , caption=PHONE_NUMBER_TEXT, reply_markup=reply_markup)
 
 
