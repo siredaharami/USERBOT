@@ -989,8 +989,24 @@ async def stream_audio_or_video(client, message):
             return
 
 
-@app.on_message(filters.command(["repo"], prefixes=["/", "!", "."]) & filters.user(OWNER_ID))
-async def start_command(client, message):
+ @app.on_message(filters.command(["play", "vplay"]) & filters.user(OWNER_ID))
+async def send_inline_buttons(client, message: Message):
+    if message.sender_chat:
+        mention = message.sender_chat.title
+    else:
+        mention = message.from_user.mention
+    
+    # Caption jo message ke saath display hoga
+    caption = f"""➻ ʜᴇʟʟᴏ, {mention}
+    
+🥀 ɪ ᴀᴍ ᴀɴ ≽ ᴀᴅᴠᴀɴᴄᴇᴅ ≽ ʜɪɢʜ Qᴜᴀʟɪᴛʏ
+ʙᴏᴛ, ɪ ᴄᴀɴ ꜱᴛʀᴇᴀᴍ 🌿 ᴀᴜᴅɪᴏ & ᴠɪᴅᴇᴏ ɪɴ
+ʏᴏᴜʀ ♚ ᴄʜᴀɴɴᴇʟ ᴀɴᴅ ɢʀᴏᴜᴘ.
+
+🐬 ꜰᴇᴇʟ ꜰʀᴇᴇ ≽ ᴛᴏ ᴜꜱᴇ ᴍᴇ › ᴀɴᴅ ꜱʜᴀʀᴇ
+ᴡɪᴛʜ ʏᴏᴜʀ ☛ ᴏᴛʜᴇʀ ꜰʀɪᴇɴᴅꜱ."""
+
+    # Inline buttons define karein
     buttons = InlineKeyboardMarkup(
         [
             [
@@ -998,20 +1014,27 @@ async def start_command(client, message):
             ],
             [
                 InlineKeyboardButton("🗑️ Close", callback_data="force_close"),
-            ]
+            ],
         ]
     )
-    await message.reply_text(
-        text="Hello! Here are your buttons:",
-        reply_markup=buttons
-    )
-
-@app.on_callback_query(filters.regex("force_close"))
-async def close_inline_buttons(client, callback_query):
+    
+    # Photo ke saath message reply karte hain
     try:
-        await callback_query.message.delete()
+        await message.reply_photo(
+            photo="https://files.catbox.moe/9r2c1c.jpg",  # Apne image ka URL yahan dalein
+            caption=caption,
+            reply_markup=buttons
+        )
     except Exception as e:
-        await callback_query.answer("❌ Unable to close the message!", show_alert=True)
+        print(f"Error: {e}")
+
+# Callback handler for "Close" button
+@bot.on_callback_query(filters.regex("force_close"))
+async def close_button_handler(client, callback_query):
+    try:
+        await callback_query.message.delete()  # Delete the message with buttons
+    except Exception as e:
+        await callback_query.answer("❌ Cannot delete the message!", show_alert=True)
 
 
 if __name__ == "__main__":
