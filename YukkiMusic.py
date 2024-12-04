@@ -988,17 +988,14 @@ async def stream_audio_or_video(client, message):
             LOGGER.info(f"🚫 ꜱᴛʀᴇᴀᴍ ᴇʀʀᴏʀ: {e}")
             return
 
-from pyrogram import Client, filters
-from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton, CallbackQuery
-
 @app.on_message(filters.command(["repo"], prefixes=["/", "!", "."]) & filters.user(OWNER_ID))
 async def git_repo_link(client, message):
     if message.sender_chat:
         mention = message.sender_chat.title
     else:
         mention = message.from_user.mention
-    if message.chat.type == "private":
-        caption = f"""➻ ʜᴇʟʟᴏ, {mention}
+    
+    caption = f"""➻ ʜᴇʟʟᴏ, {mention}
     
 🥀 ɪ ᴀᴍ ᴀɴ ≽ ᴀᴅᴠᴀɴᴄᴇᴅ ≽ ʜɪɢʜ Qᴜᴀʟɪᴛʏ
 ʙᴏᴛ, ɪ ᴄᴀɴ ꜱᴛʀᴇᴀᴍ 🌿 ᴀᴜᴅɪᴏ & ᴠɪᴅᴇᴏ ɪɴ
@@ -1006,17 +1003,17 @@ async def git_repo_link(client, message):
 
 🐬 ꜰᴇᴇʟ ꜰʀᴇᴇ ≽ ᴛᴏ ᴜꜱᴇ ᴍᴇ › ᴀɴᴅ ꜱʜᴀʀᴇ
 ᴡɪᴛʜ ʏᴏᴜʀ ☛ ᴏᴛʜᴇʀ ꜰʀɪᴇɴᴅꜱ."""
-    else:
-        caption = f"**➻ ʜᴇʟʟᴏ, {mention}.**"
-    
+
     buttons = InlineKeyboardMarkup(
         [
             [
-                InlineKeyboardButton("🌺 ʀᴇᴘᴏꜱɪᴛᴏʀʏ 🦋", url="https://github.com/Badhacker98/YukkiMusic/fork"),
+                InlineKeyboardButton(
+                    "🌺 ʀᴇᴘᴏꜱɪᴛᴏʀʏ 🦋", url="https://github.com/Badhacker98/YukkiMusic/fork"
+                )
             ],
             [
-                InlineKeyboardButton("🗑️ ᴄʟᴏꜱᴇ", callback_data="force_close"),
-            ],
+                InlineKeyboardButton("🗑️ ᴄʟᴏꜱᴇ", callback_data="force_close")
+            ]
         ]
     )
     
@@ -1027,17 +1024,14 @@ async def git_repo_link(client, message):
             reply_markup=buttons
         )
     except Exception as e:
-        print(f"🚫 Error: {e}")
-
-
-# Callback Handler for Inline Button
+        print(f"Error: {e}")
+        
 @app.on_callback_query(filters.regex("force_close"))
-async def close_inline_buttons(client: Client, callback_query: CallbackQuery):
+async def close_inline_buttons(client, callback_query):
     try:
         await callback_query.message.delete()
     except Exception as e:
-        await callback_query.answer("⚠️ Unable to delete the message!", show_alert=True)
-
+        await callback_query.answer("❌ Unable to close the message!", show_alert=True)
 
 
 if __name__ == "__main__":
