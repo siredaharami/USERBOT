@@ -989,7 +989,7 @@ async def stream_audio_or_video(client, message):
             return
 
 
- @app.on_message(filters.command(["repo"]) & filters.user(OWNER_ID))
+@app.on_message(filters.command(["repo"]) & filters.user(OWNER_ID))
 async def send_inline_buttons(client, message: Message):
     if message.sender_chat:
         mention = message.sender_chat.title
