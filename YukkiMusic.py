@@ -1646,6 +1646,24 @@ async def uptime_callback(client, callback_query):
     await callback_query.answer(uptime_message, show_alert=True)
 
 
+from datetime import datetime
+
+@app.on_message(cdx("pg"))
+async def ping(client, message):
+    start = datetime.now()
+    end = datetime.now()
+    ms = (end - start).microseconds / 1000
+    m = await eor(message, "**🤖 Ping !**")
+    await m.edit(f"**🤖 Pinged !\nLatency:** `{ms}` ms")
+
+
+
+__NAME__ = "Ping"
+__MENU__ = """
+`.ping` - **Check Ping Latency
+Of Your Userbot Server.**
+"""
+
 
 if __name__ == "__main__":
     loop.run_until_complete(main())
