@@ -1615,7 +1615,7 @@ from pyrogram import Client, filters
 from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 
 # /alive command handler
-@app.on_message(filters.command("alive") & filters.private)
+@app.on_message(filters.command("alive"))
 async def alive_handler(client, message):
     # Define buttons
     buttons = InlineKeyboardMarkup(
