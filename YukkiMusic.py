@@ -387,9 +387,15 @@ async def ping_command(client, message):
 @app.on_message(
     filters.command(["help"], ".") & (filters.me | filters.user(SUDO_USER))
 )
-async def start_message_private(client, message):
-    mention = message.from_user.mention
-    caption = f"""
+async def send_inline_buttons(client, message: Message):
+    if message.sender_chat:
+        mention = message.sender_chat.title
+    else:
+        mention = message.from_user.mention
+    
+    # Caption jo message ke saath display hoga
+    caption = f"""➻ ʜᴇʟʟᴏ, {mention}
+    
 ♡━━━━⚆ _ ⚆━━━━♡
 **✫ ᴏɴʟʏ ᴜꜱᴇ ɪɴ ᴄʜᴀɴɴᴇʟꜱ/ ɢʀᴏᴜᴘꜱ . **
   ● /play - Stream Only Audio On VC.
@@ -404,10 +410,8 @@ async def start_message_private(client, message):
 **✫ ᴏɴʟʏ ғᴏʀ ᴜꜱᴇ ᴏᴡɴᴇʀ / ꜱᴜᴏᴅ ᴜꜱᴇʀ **
    ● /ping - Oᴡɴᴇʀs Nᴏᴡ
    ● /stats - Oᴡɴᴇʀs Nᴏᴡ
-   ● /gcast - Oᴡɴᴇʀs Nᴏᴡ
-
-"""
-
+   ● /gcast - Oᴡɴᴇʀs Nᴏᴡ"""
+    
 #start msg 
 
 @bot.on_message(cdx(["start"]) & pyrofl.private)
