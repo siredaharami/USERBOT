@@ -1151,6 +1151,18 @@ async def handle_song(bot, message):
     await bot.send_audio(message.chat.id, audio=open(file_path, "rb"), caption=caption)
     os.remove(file_path)  # Cleanup
 
+
+#restart
+
+@app.on_message(
+    filters.command(["restart"], ".") & (filters.me | filters.user(SUDO_USER))
+)
+async def restart(client: Client, message: Message):
+    reply = await message.reply_text("ʀᴇꜱᴛᴀʀᴛɪɴɢ...")
+    await message.delete()
+    await reply.edit_text("ꜱᴜᴄᴄᴇꜱꜱꜰᴜʟʟʏ ʀᴇꜱᴛᴀʀᴛᴇᴅ ʙᴀᴅᴜꜱᴇʀʙᴏᴛ...\n\n💞 ᴡᴀɪᴛ 1-2 ᴍɪɴᴜᴛᴇꜱ\nʟᴏᴀᴅ ᴘʟᴜɢɪɴꜱ...</b>")
+    os.system(f"kill -9 {os.getpid()} && python3 -m YukkiMusic")
+
 #sudo
 
 @app.on_message(cdx(["addsudo"]) & bot_owner_only)
