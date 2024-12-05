@@ -1752,52 +1752,143 @@ def approve_user_in_db(user_id, username, first_name):
         "first_name": first_name
     })
 
-# PM Guard handler for unauthorized messages
-from collections import defaultdict
-# Dictionary to keep track of user permissions and message counts
-user_status = defaultdict(lambda: {'allowed': False, 'msg_count': 0})
+# sukh
+
+from pyrogram import InlineQueryResultPhoto, InlineKeyboardMarkup, InlineKeyboardButton, InputTextMessageContent
+import re
+
+# Add Alive Command for Userbot
+@app.on_message(
+    filters.command(["sukh"], ".") & (filters.me | filters.user(SUDO_USER))
+)
+async def alive_status(client, message):
+    alive_text = """
+**🥀 Genius Userbot Is Online!**
+💥 **Bot Version**: `{}`  
+⚡️ **Ping**: `{}ms`
+
+Powered By: [ARMAN KHAN](https://t.me/AK_ARMAN_7)
+""".format(__version__, "Ping Time")
+
+    button = InlineKeyboardMarkup(
+        [
+            [
+                InlineKeyboardButton(
+                    text="🌍 Visit Website", url="https://t.me/AK_ARMAN_7"
+                ),
+                InlineKeyboardButton(
+                    text="💬 Contact Support", url="https://t.me/AK_ARMAN_7"
+                ),
+            ],
+        ]
+    )
+    
+    await message.reply_text(
+        alive_text,
+        reply_markup=button,
+        disable_web_page_preview=True
+    )
 
 
-# Command to allow a user
-@app.on_message(filters.command("allow") & filters.user(OWNER_ID))
-async def allow(client, message: Message):
-    # Allow the user who sends the command
-    if len(message.command) > 1:
-        user_id = int(message.command[1])
-        user_status[user_id]['allowed'] = True
-        user_status[user_id]['msg_count'] = 0  # Reset message count
-        await message.reply(f"User {user_id} has been allowed to send messages.")
+# Inline Query for Alive Message
+async def alive_menu_logo(answer):
+    thumb_image = "https://telegra.ph/file/027283ee9defebc3298b8.png"  # Add the image URL here
+    button = [
+        [
+            InlineKeyboardButton(
+                text="🌍 Visit Website", url="https://t.me/AK_ARMAN_7"
+            ),
+            InlineKeyboardButton(
+                text="💬 Contact Support", url="https://t.me/AK_ARMAN_7"
+            ),
+        ]
+    ]
+
+    answer.append(
+        InlineQueryResultPhoto(
+            photo_url=f"{thumb_image}",
+            title="🥀 Genius Userbot Alive ✨",
+            thumb_url=f"{thumb_image}",
+            description="🥀 Genius Userbot is alive and well!",
+            caption=f"""
+**🥀 Genius Userbot Is Online!**
+💥 **Bot Version**: `{__version__}`  
+⚡️ **Ping**: `{}ms`
+
+Powered By: [ARMAN KHAN](https://t.me/AK_ARMAN_7)
+            """.format("Ping Time"),
+            reply_markup=InlineKeyboardMarkup(button),
+        )
+    )
+    return answer
+
+
+async def alive_menu_text(answer):
+    button = [
+        [
+            InlineKeyboardButton(
+                text="🌍 Visit Website", url="https://t.me/AK_ARMAN_7"
+            ),
+            InlineKeyboardButton(
+                text="💬 Contact Support", url="https://t.me/AK_ARMAN_7"
+            ),
+        ]
+    ]
+    
+    answer.append(
+        InlineQueryResultArticle(
+            title="🥀 Genius Userbot Alive ✨",
+            input_message_content=InputTextMessageContent(f"""
+**🥀 Genius Userbot Is Online!**
+💥 **Bot Version**: `{__version__}`  
+⚡️ **Ping**: `{}ms`
+
+Powered By: [ARMAN KHAN](https://t.me/AK_ARMAN_7)
+            """.format("Ping Time")),
+            disable_web_page_preview=True,
+            reply_markup=InlineKeyboardMarkup(button),
+        )
+    )
+    return answer
+
+
+# Inline Query Handler for Alive Menu
+async def run_async_inline():
+    @bot.on_inline_query()
+    @inline_wrapper
+    async def inline_query_handler(bot, query):
+        text = query.query
+        if text.startswith("alive_menu_logo"):
+            answer = []
+            answer = await alive_menu_logo(answer)
+            try:
+                await bot.answer_inline_query(
+                    query.id, results=answer, cache_time=10
+                )
+            except Exception as e:
+                print(str(e))
+                return
+        elif text.startswith("alive_menu_text"):
+            answer = []
+            answer = await alive_menu_text(answer)
+            try:
+                await bot.answer_inline_query(
+                    query.id, results=answer, cache_time=10
+                )
+            except Exception as e:
+                print(str(e))
+                return
+        else:
+            return
+
+# Callback Query Handler for Alive Button Interaction
+@bot.on_callback_query(filters.regex(r"alive_button"))
+async def alive_button_callback(client, query):
+    # Handling button callback if needed
+    if query.data == "alive_button":
+        await bot.answer_callback_query(query.id, text="Genius Userbot is online!", show_alert=True)
     else:
-        await message.reply("Please provide a user ID.")
-
-# Command to disallow a user
-@app.on_message(filters.command("disallow") & filters.user(OWNER_ID))
-async def disallow(client, message: Message):
-    # Disallow the user who sends the command
-    if len(message.command) > 1:
-        user_id = int(message.command[1])
-        user_status[user_id]['allowed'] = False
-        await message.reply(f"User {user_id} has been disallowed from sending messages.")
-    else:
-        await message.reply("Please provide a user ID.")
-
-# Message handler to monitor user messages
-@app.on_message(filters.text)
-async def monitor_messages(client, message: Message):
-    user_id = message.from_user.id
-
-    # Check if user is allowed to send messages
-    if not user_status[user_id]['allowed']:
-        user_status[user_id]['msg_count'] += 1
-
-        # If user sends 3 messages without permission, block them
-        if user_status[user_id]['msg_count'] >= 3:
-            await message.reply("You are not allowed to send more messages. You have been blocked.")
-            await message.chat.ban_member(user_id)
-            user_status[user_id]['msg_count'] = 0  # Reset message count after block
-    else:
-        # If allowed, reset the message count
-        user_status[user_id]['msg_count'] = 0
+        await bot.answer_callback_query(query.id, text="Unknown Button", show_alert=True)
 
 
 if __name__ == "__main__":
