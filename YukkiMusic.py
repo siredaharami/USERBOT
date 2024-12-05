@@ -169,9 +169,6 @@ async def main():
     start_message = (
         "🌀 **Userbot Started Successfully!**\n"
         "⚡ **Powered By:** [Your Userbot](https://github.com/your-repo-link)"
-    ).format(
-        datetime.now().strftime("%Y-%m-%d"),
-        datetime.now().strftime("%H:%M:%S")
     )
 
     try:
@@ -182,9 +179,23 @@ async def main():
         pass
     if LOG_GROUP_ID != 0:
         try:
-            await app.send_message(LOG_GROUP_ID, "🦋 ᴀꜱꜱɪꜱᴛᴀɴᴛ ꜱᴛᴀʀᴛᴇᴅ..")
-        except Exception:
-            pass
+            # Send photo with button in logger group
+            photo = "https://files.catbox.moe/ia8zg9.jpg"  # Replace with the path to your photo
+            caption = "🤖 **Bot Started Successfully!**\n\nSelect an option below:"
+            buttons = InlineKeyboardMarkup(
+                [
+                    [InlineKeyboardButton("🌟 Start", callback_data="start")],
+                    [InlineKeyboardButton("🔗 Visit Repo", url="https://github.com/Badhacker98")],
+                ]
+            )
+            await app.send_photo(
+                LOG_GROUP_ID,
+                photo=photo,
+                caption=caption,
+                reply_markup=buttons
+            )
+        except Exception as e:
+            LOGGER.info(f"🚫 Error while sending photo: {e}")
     LOGGER.info("ᴜꜱᴇʀʙᴏᴛ ꜱᴛᴀʀᴛ 💫")
     try:
         await bot.start()
@@ -197,7 +208,7 @@ async def main():
         except Exception:
             pass
     LOGGER.info("✅ ʙᴏᴛ ꜱᴛᴀʀᴛ ")
-    
+
     await idle()
 
 
