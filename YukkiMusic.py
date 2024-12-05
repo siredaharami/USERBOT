@@ -178,7 +178,7 @@ async def main():
 
     try:
         # Replace 'OWNER_ID' with your Telegram user ID
-        await app.send_message(OWNER_ID, start_message)
+        await bot.send_message(OWNER_ID, start_message)
         LOGGER.info("✅ Start message sent to the owner.")
     except Exception as e:
         pass
@@ -195,7 +195,6 @@ async def main():
             )
             await bot.send_photo(
                 LOG_GROUP_ID,
-                photo=photo,
                 caption=caption,
                 reply_markup=buttons
             )
