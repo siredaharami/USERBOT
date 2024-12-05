@@ -123,6 +123,7 @@ mongodb = mongo_async_cli.Badxdb
 # Store Start Time
 __start_time__ = time.time()
 
+
 # Start and Run
 async def main():
     LOGGER.info("Updating directories...")
@@ -170,51 +171,56 @@ async def main():
         LOGGER.info(f"🚫 PyTgCalls Error: {e}")
         sys.exit()
 
-    # Sending Start Message
+    LOGGER.info("Sending Start Message...")
+
+    # Start message and buttons
     start_message = (
         "🌀 **Userbot Started Successfully!**\n"
         "⚡ **Powered By:** [Your Userbot](https://github.com/your-repo-link)"
     )
 
+    start_buttons = InlineKeyboardMarkup(
+        [
+            [InlineKeyboardButton("🔗 GitHub", url="https://github.com/your-repo-link")],
+            [InlineKeyboardButton("👤 Support", url="https://t.me/your_support_chat")]
+        ]
+    )
+
+    photo_path = "https://files.catbox.moe/ia8zg9.jpg"  # Replace with the actual path to your photo
+
     try:
-        # Replace 'OWNER_ID' with your Telegram user ID
-        await bot.send_message(OWNER_ID, start_message)
-        LOGGER.info("✅ Start message sent to the owner.")
-    except Exception as e:
-        pass
-    if LOG_GROUP_ID != 0:
-        try:
-            # Send photo with button in logger group
-            photo = "https://files.catbox.moe/ia8zg9.jpg"  # Replace with the path to your photo
-            caption = "🤖 **Bot Started Successfully!**\n\nSelect an option below:"
-            buttons = InlineKeyboardMarkup(
-                [
-                    [InlineKeyboardButton("🌟 Start", callback_data="start")],
-                    [InlineKeyboardButton("🔗 Visit Repo", url="https://github.com/Badhacker98")],
-                ]
+        # Notify owner
+        if OWNER_ID:
+            await app.send_photo(
+                OWNER_ID,
+                photo=photo_path,
+                caption=start_message,
+                reply_markup=start_buttons
             )
+            LOGGER.info("✅ Start message with photo sent to the owner.")
+        
+        # Notify log group
+        if LOG_GROUP_ID:
             await bot.send_photo(
                 LOG_GROUP_ID,
-                caption=caption,
-                reply_markup=buttons
+                photo=photo_path,
+                caption="🤖 Bot started successfully.",
+                reply_markup=start_buttons
             )
-        except Exception as e:
-            LOGGER.info(f"🚫 Error while sending photo: {e}")
-    LOGGER.info("ᴜꜱᴇʀʙᴏᴛ ꜱᴛᴀʀᴛ 💫")
+            LOGGER.info("✅ Start message with photo sent to the log group.")
+
+    except Exception as e:
+        LOGGER.error(f"Error sending start messages: {e}")
+
+    LOGGER.info("Starting bot...")
     try:
         await bot.start()
     except Exception as e:
-        LOGGER.info(f"🚫 ʙᴏᴛ ᴇʀʀᴏʀ {e}")
+        LOGGER.info(f"🚫 Bot Error: {e}")
         sys.exit()
-    if LOG_GROUP_ID != 0:
-        try:
-            await bot.send_message(LOG_GROUP_ID, "🤖 ʙᴏᴛ ꜱᴛᴀʀᴛᴇᴅ.")
-        except Exception:
-            pass
-    LOGGER.info("✅ ʙᴏᴛ ꜱᴛᴀʀᴛ ")
 
+    LOGGER.info("✅ Bot started successfully.")
     await idle()
-
 
 # Some Required Functions ...!!
 
