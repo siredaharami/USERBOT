@@ -10,6 +10,7 @@ pillow==9.5.0
 py-tgcalls==2.1.0.dev2
 python-dotenv==1.0.1
 tgcrypto==1.2.5
+youtube-search
 youtube-search-python
 yt-dlp==2024.11.18
 git+https://github.com/PyrogramMod/PyrogramMod.git
