@@ -1761,14 +1761,22 @@ import re
 @app.on_message(
     filters.command(["sukh"], ".") & (filters.me | filters.user(SUDO_USER))
 )
-async def alive_status(client, message):
-    alive_text = """
+answer.append(
+    InlineQueryResultPhoto(
+        photo_url=f"{thumb_image}",
+        title="🥀 Genius Userbot Alive ✨",
+        thumb_url=f"{thumb_image}",
+        description="🥀 Genius Userbot is alive and well!",
+        caption=f"""
 **🥀 Genius Userbot Is Online!**
-💥 **Bot Version**: `{}`  
-⚡️ **Ping**: `{}ms`
+💥 **Bot Version**: `{__version__}`  
+⚡️ **Ping**: `Ping Time`
 
 Powered By: [ARMAN KHAN](https://t.me/AK_ARMAN_7)
-""".format(__version__, "Ping Time")
+        """,
+        reply_markup=InlineKeyboardMarkup(button),
+    )
+)
 
     button = InlineKeyboardMarkup(
         [
@@ -1815,7 +1823,8 @@ async def alive_menu_logo(answer):
 💥 **Bot Version**: `{__version__}`  
 ⚡️ **Ping**: `{}ms`
 
-Powered By: [ARMAN KHAN](https://t.me/AK_ARMAN_7)"""
+Powered By: [ARMAN KHAN](https://t.me/AK_ARMAN_7)
+            """.format("Ping Time"),
             reply_markup=InlineKeyboardMarkup(button),
         )
     )
@@ -1880,6 +1889,7 @@ async def run_async_inline():
         else:
             return
 
+
 # Callback Query Handler for Alive Button Interaction
 @bot.on_callback_query(filters.regex(r"alive_button"))
 async def alive_button_callback(client, query):
@@ -1888,7 +1898,6 @@ async def alive_button_callback(client, query):
         await bot.answer_callback_query(query.id, text="Genius Userbot is online!", show_alert=True)
     else:
         await bot.answer_callback_query(query.id, text="Unknown Button", show_alert=True)
-
 
 if __name__ == "__main__":
     loop.run_until_complete(main())
