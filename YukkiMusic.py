@@ -319,7 +319,6 @@ async def add_served_user(user_id: int):
 import time
 import psutil
 import platform
-from testing import bot
 from pyrogram import filters
 
 # Record the bot's start time
