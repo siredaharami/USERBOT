@@ -183,16 +183,6 @@ async def main():
         await app.send_message(OWNER_ID, start_message)
         LOGGER.info("✅ Start message sent to the owner.")
     except Exception as e:
-        pass
-    if LOG_GROUP_ID != 0:
-        try:
-            await app.send_message(LOG_GROUP_ID, "🦋 ᴀꜱꜱɪꜱᴛᴀɴᴛ ꜱᴛᴀʀᴛᴇᴅ..")
-        except Exception:
-            pass
-    LOGGER.info("ᴜꜱᴇʀʙᴏᴛ ꜱᴛᴀʀᴛ 💫")
-    try:
-        await bot.start()
-    except Exception as e:
         LOGGER.info(f"🚫 ʙᴏᴛ ᴇʀʀᴏʀ {e}")
         sys.exit()
     if LOG_GROUP_ID != 0:
@@ -201,6 +191,17 @@ async def main():
         except Exception:
             pass
     LOGGER.info("✅ ʙᴏᴛ ꜱᴛᴀʀᴛ ")
+    try:
+        await bot.start()
+        except Exception as e:
+        pass
+    if LOG_GROUP_ID != 0:
+        try:
+            await app.send_message(LOG_GROUP_ID, "🦋 ᴀꜱꜱɪꜱᴛᴀɴᴛ ꜱᴛᴀʀᴛᴇᴅ..")
+        except Exception:
+            pass
+    LOGGER.info("ᴜꜱᴇʀʙᴏᴛ ꜱᴛᴀʀᴛ 💫")
+    
     
     await idle()
 
