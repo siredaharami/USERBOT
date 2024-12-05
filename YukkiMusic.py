@@ -1587,7 +1587,7 @@ async def stopSpam(_, message: Message):
 
 
 # Define the /alive command
-@app.on_message(filters.command("alive"))
+@bot.on_message(filters.command("alive"))
 async def alive(client, message):
     # Inline buttons
     buttons = InlineKeyboardMarkup(
@@ -1615,7 +1615,7 @@ async def alive(client, message):
     )
 
 # Handle the "uptime" callback
-@app.on_callback_query(filters.regex("uptime"))
+@bot.on_callback_query(filters.regex("uptime"))
 async def uptime_callback(client, callback_query):
     # Example uptime logic (replace with real data if available)
     uptime_message = "✅ **Uptime:** 3 days, 4 hours, 12 minutes."
