@@ -942,6 +942,9 @@ async def stream_audio_or_video(client, message):
 
 😘ᴍʏ ᴄᴜᴛᴇ ᴏᴡɴᴇʀ🥰 [🙈ᴅɪᴋʜᴏ ɢᴇ ᴋʏᴀ❤️](https://t.me/II_BAD_BABY_II)"""
                 await app.send_photo(chat_id, thumbnail, caption, reply_markup=buttons)
+                await stream_logger(
+                    chat_id, user, title, duration, stream_type, thumbnail, position
+                )
             except Exception as e:
                 try:
                     return await aux.edit(f"Qᴜᴇᴜᴇ ᴇʀʀᴏʀ: `{e}`")
@@ -1048,7 +1051,7 @@ async def stream_audio_or_video(client, message):
 🔉 Sᴛʀᴇᴀᴍ Tʏᴘᴇ 🔊  {stream_type}
 💌 Rᴇǫᴜᴇsᴛᴇᴅ ʙʏ 💌  {requested_by}
 
-😘ᴍʏ ᴄᴜᴛᴇ ᴏᴡɴᴇʀ🥰 [🙈ᴅɪᴋʜᴏ ɢᴇ ᴋʏᴀ❤️](https://t.me/II_BAD_BABY_II)"""
+😘ᴍʏ ᴄᴜᴛᴇ ᴏᴡɴᴇʀ🥰 [ᴅɪᴋʜᴏ ɢᴇ ᴋʏᴀ](https://t.me/II_BAD_BABY_II)"""
                 await app.send_photo(chat_id, thumbnail, caption, reply_markup=buttons)
                 await stream_logger(
                     chat_id, user, title, duration, stream_type, thumbnail
