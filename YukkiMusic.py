@@ -689,7 +689,48 @@ async def clear_queue(chat_id):
     if check:
         QUEUE.pop(chat_id)
 
+# stream_logger
+async def stream_logger(
+    chat_id, user, title, duration, stream_type, thumbnail, position=None
+):
+    if OWNER_ID != 0:
+        if chat_id != OWNER_ID:
+            chat = await bot.get_chat(chat_id)
+            chat_name = chat.title
+            if chat.username:
+                chat_link = f"@{chat.username}"
+            else:
+                chat_link = "ᴘʀɪᴠᴀᴛᴇ ᴄʜᴀᴛ"
+            try:
+                if user.username:
+                    requested_by = f"@{user.username}"
+                else:
+                    requested_by = user.mention
+            except Exception:
+                requested_by = user.title
+            if position:
+                caption = f"""**✅ 𝐀ᴅᴅᴇᴅ 𝐓ᴏ 𝐐ᴜᴇᴜᴇ 𝐀ᴛ :** `#{position}`
 
+**❍ Tɪᴛʟᴇ** {title}
+**❍ Dᴜʀᴀᴛɪᴏɴ :** {duration}
+**❍ Sᴛʀᴇᴀᴍ Tʏᴘᴇ:** {stream_type}
+**❍ Cʜᴀᴛ Nᴀᴍᴇ:** {chat_name}
+**❍ Cʜᴀᴛ Lɪɴᴋ:** {chat_link}
+**❍ Rᴇǫᴜᴇsᴛᴇᴅ ʙʏ:** {requested_by}"""
+            else:
+                caption = f"""**✅ 𝐒ᴛᴀʀᴛᴇᴅ 𝐒ᴛʀᴇᴀᴍɪɴɢ 𝐎ɴ 𝐕ᴄ.**
+
+**❍ Tɪᴛʟᴇ** {title}
+**❍ Dᴜʀᴀᴛɪᴏɴ :** {duration}
+**❍ Sᴛʀᴇᴀᴍ Tʏᴘᴇ:** {stream_type}
+**❍ Cʜᴀᴛ Nᴀᴍᴇ:** {chat_name}
+**❍ Cʜᴀᴛ Lɪɴᴋ:** {chat_link}
+**❍ Rᴇǫᴜᴇsᴛᴇᴅ ʙʏ:** {requested_by}"""
+            try:
+                await bot.send_photo(OWNER_ID, photo=thumbnail, caption=caption)
+            except Exception:
+                pass
+                
 # Change stream & Close Stream
 
 
