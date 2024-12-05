@@ -165,6 +165,22 @@ async def main():
 
     LOGGER.info("Required variables collected.")
 
+    LOGGER.info("Starting bot...")
+    try:
+        await bot.start()
+    except Exception as e:
+        LOGGER.info(f"🚫 Bot Error: {e}")
+        sys.exit()
+
+    if LOG_GROUP_ID != 0:
+        try:
+            # Replace 'photo_path' with the actual path to your photo
+            photo_path = "https://files.catbox.moe/ia8zg9.jpg"
+            await bot.send_photo(LOG_GROUP_ID, photo=photo_path, caption="🤖 Bot started successfully!")
+        except Exception as e:
+            LOGGER.info(f"Error sending photo: {e}")
+    LOGGER.info("✅ Bot started")
+
     LOGGER.info("Starting userbot...")
     try:
         await app.start()
@@ -179,30 +195,18 @@ async def main():
         sys.exit()
 
     try:
-        # Replace 'OWNER_ID' with your Telegram user ID
         await app.send_message(OWNER_ID, start_message)
         LOGGER.info("✅ Start message sent to the owner.")
     except Exception as e:
-        LOGGER.info(f"🚫 ʙᴏᴛ ᴇʀʀᴏʀ {e}")
-        sys.exit()
-    if LOG_GROUP_ID != 0:
-        try:
-            await bot.send_message(LOG_GROUP_ID, "🤖 ʙᴏᴛ ꜱᴛᴀʀᴛᴇᴅ.")
-        except Exception:
-            pass
-    LOGGER.info("✅ ʙᴏᴛ ꜱᴛᴀʀᴛ ")
-    try:
-        await bot.start()
-    except Exception as e:
         pass
+
     if LOG_GROUP_ID != 0:
         try:
-            await app.send_message(LOG_GROUP_ID, "🦋 ᴀꜱꜱɪꜱᴛᴀɴᴛ ꜱᴛᴀʀᴛᴇᴅ..")
+            await app.send_message(LOG_GROUP_ID, "🦋 Assistant started..")
         except Exception:
             pass
-    LOGGER.info("ᴜꜱᴇʀʙᴏᴛ ꜱᴛᴀʀᴛ 💫")
-    
-    
+    LOGGER.info("✅ Userbot started 💫")
+
     await idle()
 
 # Some Required Functions ...!!
