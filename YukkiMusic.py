@@ -829,7 +829,7 @@ async def get_call_status(chat_id):
     return call_status
 
 
-@app.on_message(cdx(filters.command(["play", "vplay"]) & filters.user(SUDO_USER)))
+@app.on_message(cdx(["play", "vplay"]) & SUDO_USER)
 async def stream_audio_or_video(client, message):
     try:
         await message.delete()
@@ -1118,7 +1118,7 @@ async def stream_audio_or_video(client, message):
             return
 
 # song download #
-@app.on_message(cdx(filters.command(["song"]) & filters.user(OWNER_ID)))
+@app.on_message(cdx(["song"]) & SUDO_USER)
 async def handle_song(bot, message):
     name = message.text.split(maxsplit=1)[1:]
     if not name:
@@ -1138,7 +1138,7 @@ async def handle_song(bot, message):
 
 #sudo
 
-@app.on_message(cdx(filters.command(["addsudo"]) & filters.user(OWNER_ID)))
+@app.on_message(cdx(["addsudo"]) & bot_owner_only)
 async def addsudo(client: Client, message: Message):
     try:
         if not message.reply_to_message:
@@ -1164,7 +1164,7 @@ async def addsudo(client: Client, message: Message):
         await message.reply_text(f"**ERROR:** `{e}`")
         return
 
-@app.on_message(cdx(filters.command(["rmsudo"]) & filters.user(OWNER_ID)))
+@app.on_message(cdx(["rmsudo"]) & bot_owner_only)
 async def rmsudo(client: Client, message: Message):
     try:
         if not message.reply_to_message:
@@ -1190,7 +1190,7 @@ async def rmsudo(client: Client, message: Message):
         return
 
 
-@app.on_message(cdx(filters.command(["sudolist"]) & filters.user(OWNER_ID)))
+@app.on_message(cdx(["sudolist"]) & SUDO_USER)
 async def sudolist(client: Client, message: Message):
     users = SUDO_USER
     ex = await message.edit_text("`Processing...`")
@@ -1207,7 +1207,7 @@ async def sudolist(client: Client, message: Message):
     
     
 #repo
-@app.on_message(cdx(filters.command(["repo"]) & filters.user(SUDO_USER)))
+@app.on_message(cdx(["repo"]) & SUDO_USER)
 async def send_inline_buttons(client, message: Message):
     if message.sender_chat:
         mention = message.sender_chat.title
