@@ -345,7 +345,7 @@ def get_readable_time(seconds: int) -> str:
     count %= 60
     return f"{days}d {hours}h {minutes}m {count}s"
 
-@app.on_message(filters.command(["ping"]) & filters.user(SUDO_USER))
+@app.on_message(cdx(filters.command(["ping"]) & filters.user(SUDO_USER)))
 async def ping_command(client, message):
     # Measure response time
     start_time = time.time()
@@ -830,7 +830,7 @@ async def get_call_status(chat_id):
     return call_status
 
 
-@app.on_message(filters.command(["play", "vplay"]) & filters.user(SUDO_USER))
+@app.on_message(cdx(filters.command(["play", "vplay"]) & filters.user(SUDO_USER)))
 async def stream_audio_or_video(client, message):
     try:
         await message.delete()
@@ -1119,7 +1119,7 @@ async def stream_audio_or_video(client, message):
             return
 
 # song download #
-@app.on_message(filters.command(["song"]) & filters.user(OWNER_ID))
+@app.on_message(cdx(filters.command(["song"]) & filters.user(OWNER_ID)))
 async def handle_song(bot, message):
     name = message.text.split(maxsplit=1)[1:]
     if not name:
@@ -1139,7 +1139,7 @@ async def handle_song(bot, message):
 
 #sudo
 
-@app.on_message(filters.command(["addsudo"]) & filters.user(OWNER_ID))
+@app.on_message(cdx(filters.command(["addsudo"]) & filters.user(OWNER_ID)))
 async def addsudo(client: Client, message: Message):
     try:
         if not message.reply_to_message:
@@ -1165,7 +1165,7 @@ async def addsudo(client: Client, message: Message):
         await message.reply_text(f"**ERROR:** `{e}`")
         return
 
-@app.on_message(filters.command(["rmsudo"]) & filters.user(OWNER_ID))
+@app.on_message(cdx(filters.command(["rmsudo"]) & filters.user(OWNER_ID)))
 async def rmsudo(client: Client, message: Message):
     try:
         if not message.reply_to_message:
@@ -1191,7 +1191,7 @@ async def rmsudo(client: Client, message: Message):
         return
 
 
-@app.on_message(filters.command(["sudolist"]) & filters.user(OWNER_ID))
+@app.on_message(cdx(filters.command(["sudolist"]) & filters.user(OWNER_ID)))
 async def sudolist(client: Client, message: Message):
     users = SUDO_USER
     ex = await message.edit_text("`Processing...`")
@@ -1208,7 +1208,7 @@ async def sudolist(client: Client, message: Message):
     
     
 #repo
-@app.on_message(filters.command(["repo"]) & filters.user(SUDO_USER))
+@app.on_message(cdx(filters.command(["repo"]) & filters.user(SUDO_USER)))
 async def send_inline_buttons(client, message: Message):
     if message.sender_chat:
         mention = message.sender_chat.title
@@ -1230,7 +1230,6 @@ async def send_inline_buttons(client, message: Message):
         await message.reply_photo(
             photo="https://files.catbox.moe/xnganj.jpg",  # Apne image ka URL yahan dalein
             caption=caption,
-            reply_markup=buttons
         )
     except Exception as e:
         print(f"Error: {e}")
