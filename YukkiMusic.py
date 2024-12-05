@@ -2,6 +2,7 @@ import aiohttp, aiofiles, asyncio, base64, logging
 import os, platform, random, re, socket
 import sys, time, textwrap
 import shutil
+import yt_dlp
 import traceback
 
 from os import getenv
@@ -41,6 +42,7 @@ from pytgcalls.types import Call, MediaStream, AudioQuality, VideoQuality
 from PIL import Image, ImageDraw, ImageEnhance
 from PIL import ImageFilter, ImageFont, ImageOps
 from youtubesearchpython.__future__ import VideosSearch
+from youtube_search import YoutubeSearch
 
 loop = asyncio.get_event_loop()
 
