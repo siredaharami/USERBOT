@@ -1638,7 +1638,6 @@ from pyrogram.types import Message
 from datetime import datetime, timedelta
 import logging
 # Import configuration values from config.py
-import OWNER_ID
 from BADMUNDA.db import get_user_data, update_user_data
 
 # Path to warning image
