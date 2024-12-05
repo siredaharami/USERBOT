@@ -1758,10 +1758,9 @@ def approve_user_in_db(user_id, username, first_name):
 
 
 # sukh
-from pyrogram import InlineQueryResultCachedPhoto, InlineKeyboardMarkup, InlineKeyboardButton, InputTextMessageContent
+from pyrogram import Client, InlineKeyboardMarkup, InlineKeyboardButton, InputTextMessageContent, InlineQueryResultArticle
 import re
 
-# Add Alive Command for Userbot
 @app.on_message(
     filters.command(["sukh"], ".") & (filters.me | filters.user(SUDO_USER))
 )
@@ -1795,39 +1794,7 @@ Powered By: [ARMAN KHAN](https://t.me/AK_ARMAN_7)
     )
 
 
-# Inline Query for Alive Message
-async def alive_menu_logo(answer):
-    ping_time = "100ms"  # Replace this with actual ping time logic if needed
-    thumb_image = "https://telegra.ph/file/027283ee9defebc3298b8.png"  # Add the image URL here
-    button = [
-        [
-            InlineKeyboardButton(
-                text="🌍 Visit Website", url="https://t.me/AK_ARMAN_7"
-            ),
-            InlineKeyboardButton(
-                text="💬 Contact Support", url="https://t.me/AK_ARMAN_7"
-            ),
-        ]
-    ]
-
-    answer.append(
-        InlineQueryResultCachedPhoto(
-            photo_file_id="your_photo_file_id_here",  # Replace this with a file ID of the image
-            title="🥀 Genius Userbot Alive ✨",
-            description="🥀 Genius Userbot is alive and well!",
-            caption=f"""
-**🥀 Genius Userbot Is Online!**
-💥 **Bot Version**: `{__version__}`  
-⚡️ **Ping**: `{ping_time}`
-
-Powered By: [ARMAN KHAN](https://t.me/AK_ARMAN_7)
-            """,
-            reply_markup=InlineKeyboardMarkup(button),
-        )
-    )
-    return answer
-
-
+# Inline Query Handler
 async def alive_menu_text(answer):
     ping_time = "100ms"  # Replace this with actual ping time logic if needed
     button = [
@@ -1840,7 +1807,8 @@ async def alive_menu_text(answer):
             ),
         ]
     ]
-    
+
+    # Create InlineQueryResultArticle instead of photo
     answer.append(
         InlineQueryResultArticle(
             title="🥀 Genius Userbot Alive ✨",
@@ -1859,43 +1827,24 @@ Powered By: [ARMAN KHAN](https://t.me/AK_ARMAN_7)
 
 
 # Inline Query Handler for Alive Menu
-async def run_async_inline():
-    @bot.on_inline_query()
-    @inline_wrapper
-    async def inline_query_handler(bot, query):
-        text = query.query
-        if text.startswith("alive_menu_logo"):
-            answer = []
-            answer = await alive_menu_logo(answer)
-            try:
-                await bot.answer_inline_query(
-                    query.id, results=answer, cache_time=10
-                )
-            except Exception as e:
-                print(str(e))
-                return
-        elif text.startswith("alive_menu_text"):
-            answer = []
-            answer = await alive_menu_text(answer)
-            try:
-                await bot.answer_inline_query(
-                    query.id, results=answer, cache_time=10
-                )
-            except Exception as e:
-                print(str(e))
-                return
-        else:
+@app.on_inline_query()
+async def inline_query_handler(client, query):
+    text = query.query
+    if text.startswith("alive_menu_text"):
+        answer = []
+        answer = await alive_menu_text(answer)
+        try:
+            await client.answer_inline_query(
+                query.id, results=answer, cache_time=10
+            )
+        except Exception as e:
+            print(str(e))
             return
-
-
-# Callback Query Handler for Alive Button Interaction
-@bot.on_callback_query(filters.regex(r"alive_button"))
-async def alive_button_callback(client, query):
-    # Handling button callback if needed
-    if query.data == "alive_button":
-        await bot.answer_callback_query(query.id, text="Genius Userbot is online!", show_alert=True)
     else:
-        await bot.answer_callback_query(query.id, text="Unknown Button", show_alert=True)
+        return
+
+
+
 
 
 
