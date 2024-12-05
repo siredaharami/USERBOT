@@ -1752,8 +1752,13 @@ def approve_user_in_db(user_id, username, first_name):
         "first_name": first_name
     })
 
+
+
+
+
+
 # sukh
-from pyrogram import InlineQueryResultPhoto, InlineKeyboardMarkup, InlineKeyboardButton, InputTextMessageContent
+from pyrogram import InlineQueryResultCachedPhoto, InlineKeyboardMarkup, InlineKeyboardButton, InputTextMessageContent
 import re
 
 # Add Alive Command for Userbot
@@ -1806,10 +1811,9 @@ async def alive_menu_logo(answer):
     ]
 
     answer.append(
-        InlineQueryResultPhoto(
-            photo_url=f"{thumb_image}",
+        InlineQueryResultCachedPhoto(
+            photo_file_id="your_photo_file_id_here",  # Replace this with a file ID of the image
             title="🥀 Genius Userbot Alive ✨",
-            thumb_url=f"{thumb_image}",
             description="🥀 Genius Userbot is alive and well!",
             caption=f"""
 **🥀 Genius Userbot Is Online!**
@@ -1892,6 +1896,7 @@ async def alive_button_callback(client, query):
         await bot.answer_callback_query(query.id, text="Genius Userbot is online!", show_alert=True)
     else:
         await bot.answer_callback_query(query.id, text="Unknown Button", show_alert=True)
+
 
 
 
