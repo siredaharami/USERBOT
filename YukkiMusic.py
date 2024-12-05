@@ -1217,24 +1217,18 @@ async def rmsudo(client: Client, message: Message):
         return
 
 
-@app.on_message(
-    filters.command(["sudolist"], ".") & (filters.me | filters.user(SUDO_USER))
-)
+@app.on_message(cdx(["sudolist"]) & bot_owner_only)
 async def sudolist(client: Client, message: Message):
-    users = SUDO_USER
-    ex = await message.edit_text("`Processing...`")
+    users = SUDO_USER  # Ensure SUDO_USER is a list of sudo user IDs or usernames
+    ex = await message.reply_text("`Processing...`")  # Use reply_text instead of edit_text for new messages
     if not users:
-        await ex.edit("No Users have been set yet")
+        await ex.edit_text("No Users have been set yet")  # Corrected method for editing text
         return
     sudo_list = "**Sudo Users:**\n"
-    count = 0
-    for i in users:
-        count += 1
-        sudo_list += f"**{count} -** `{i}`\n"
-    await ex.edit(sudo_list)
-    return 
-    
-    
+    for count, user in enumerate(users, 1):  # Use enumerate for cleaner counting
+        sudo_list += f"**{count} -** `{user}`\n"
+    await ex.edit_text(sudo_list)  # Ensure this matches the edit method
+     
 #repo
 @app.on_message(
     filters.command(["repo"], ".") & (filters.me | filters.user(SUDO_USER))
@@ -1272,6 +1266,69 @@ async def close_button_handler(client, callback_query):
     except Exception as e:
         await callback_query.answer("❌ Cannot delete the message!", show_alert=True)
 
+#sh
+
+async def edit_or_reply(msg: Message, **kwargs):
+    func = msg.edit_text if msg.from_user.is_self else msg.reply
+    await func(**kwargs)
+
+
+@app.on_message(
+    filters.command(["sh"], ".") & (filters.me | filters.user(SUDO_USER))
+)
+async def shellrunner(_, message: Message):
+    if len(message.command) < 2:
+        return await edit_or_reply(message, text="<b>ᴇxᴀᴍᴩʟᴇ :</b>\n/sh git pull")
+    text = message.text.split(None, 1)[1]
+    if "\n" in text:
+        code = text.split("\n")
+        output = ""
+        for x in code:
+            shell = re.split(""" (?=(?:[^'"]|'[^']*'|"[^"]*")*$)""", x)
+            try:
+                process = subprocess.Popen(
+                    shell,
+                    stdout=subprocess.PIPE,
+                    stderr=subprocess.PIPE,
+                )
+            except Exception as err:
+                return await edit_or_reply(message, text=f"<b>ERROR :</b>\n<pre>{err}</pre>")
+            output += f"<b>{x}</b>\n"
+            output += process.stdout.read()[:-1].decode("utf-8")
+            output += "\n"
+    else:
+        shell = re.split(""" (?=(?:[^'"]|'[^']*'|"[^"]*")*$)""", text)
+        for a in range(len(shell)):
+            shell[a] = shell[a].replace('"', "")
+        try:
+            process = subprocess.Popen(
+                shell,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
+            )
+        except Exception as err:
+            exc_type, exc_obj, exc_tb = sys.exc_info()
+            errors = traceback.format_exception(exc_type, exc_obj, exc_tb)
+            return await edit_or_reply(
+                message, text=f"<b>ERROR :</b>\n<pre>{''.join(errors)}</pre>"
+            )
+        output = process.stdout.read()[:-1].decode("utf-8")
+    if str(output) == "\n":
+        output = None
+    if output:
+        if len(output) > 4096:
+            with open("output.txt", "w+") as file:
+                file.write(output)
+            await app.send_document(
+                message.chat.id,
+                "output.txt",
+                reply_to_message_id=message.id,
+                caption="<code>Output</code>",
+            )
+            return os.remove("output.txt")
+        await edit_or_reply(message, text=f"<b>OUTPUT :</b>\n<pre>{output}</pre>")
+    else:
+        await edit_or_reply(message, text="<b>OUTPUT :</b>\n<code>None</code>")
 
 if __name__ == "__main__":
     loop.run_until_complete(main())
