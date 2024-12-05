@@ -178,7 +178,7 @@ async def main():
 
     try:
         # Replace 'OWNER_ID' with your Telegram user ID
-        await app.send_message(OWNER_ID, start_message)
+        await bot.send_message(OWNER_ID, start_message)
         LOGGER.info("✅ Start message sent to the owner.")
     except Exception as e:
         pass
@@ -193,7 +193,7 @@ async def main():
                     [InlineKeyboardButton("🔗 Visit Repo", url="https://github.com/Badhacker98")],
                 ]
             )
-            await app.send_photo(
+            await bot.send_photo(
                 LOG_GROUP_ID,
                 photo=photo,
                 caption=caption,
@@ -797,7 +797,7 @@ async def stream_audio_or_video(client, message):
     audio = (replied.audio or replied.voice) if replied else None
     video = (replied.video or replied.document) if replied else None
     text = [
-    " ʀᴜᴋᴏ ᴊᴀᴀɴ ",
+    " **🥀 Processing Query... Please Wait! 🔄** ",
     ]
     aux = await message.reply_text(random.choice(text))
     if audio:
