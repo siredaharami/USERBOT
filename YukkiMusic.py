@@ -1156,9 +1156,12 @@ COOKIES_FILE = 'cookies.txt'
 @app.on_message(
     filters.command(["song"], ".") & (filters.me | filters.user(SUDO_USER))
 )
-async def download_song(_, message: Message):
-    user_id = message.from_user.id
-    current_time = time()
+async def download_song():
+    current_time = time()  # Correct when using `from time import time`
+    # current_time = time.time()  # Correct if using `import time`
+    print(f"Current time: {current_time}")
+
+download_song()
     
     # Spam protection: Prevent multiple commands within a short time
     last_message_time = user_last_message_time.get(user_id, 0)
