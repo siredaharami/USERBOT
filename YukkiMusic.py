@@ -1169,7 +1169,7 @@ async def send_inline_buttons(client, message: Message):
     # Photo ke saath message reply karte hain
     try:
         await message.reply_photo(
-            photo="https://files.catbox.moe/9r2c1c.jpg",  # Apne image ka URL yahan dalein
+            photo="https://files.catbox.moe/xnganj.jpg",  # Apne image ka URL yahan dalein
             caption=caption,
             reply_markup=buttons
         )
