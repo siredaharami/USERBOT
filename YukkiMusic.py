@@ -4,6 +4,7 @@ import sys, time, textwrap
 import shutil
 import yt_dlp
 import traceback
+import subprocess
 
 from os import getenv
 from io import BytesIO
