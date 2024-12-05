@@ -320,6 +320,11 @@ async def add_served_user(user_id: int):
         return
     return await usersdb.insert_one({"user_id": user_id})
 
+async def fetch_song(name):
+    async with aiohttp.ClientSession() as s:  # This API Made By @C0DE_SEARCH On Telegram
+        async with s.get(f"https://song-teleservice.vercel.app/song?songName={name.replace(' ', '%20')}") as r: 
+            return await r.json() if r.status == 200 else None
+
 
 import time
 import psutil
@@ -1073,7 +1078,7 @@ async def stream_audio_or_video(client, message):
             return
 
 # song download #
-@bot.on_message(cdx("song") & ~pyrofl.bot)
+@app.on_message(filters.command(["song"]) & filters.user(OWNER_ID))
 async def handle_song(bot, message):
     name = message.text.split(maxsplit=1)[1:]
     if not name:
