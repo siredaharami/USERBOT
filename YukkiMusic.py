@@ -1753,6 +1753,52 @@ def approve_user_in_db(user_id, username, first_name):
     })
 
 # PM Guard handler for unauthorized messages
+from collections import defaultdict
+# Dictionary to keep track of user permissions and message counts
+user_status = defaultdict(lambda: {'allowed': False, 'msg_count': 0})
+
+
+# Command to allow a user
+@app.on_message(filters.command("allow") & filters.user(OWNER_ID))
+async def allow(client, message: Message):
+    # Allow the user who sends the command
+    if len(message.command) > 1:
+        user_id = int(message.command[1])
+        user_status[user_id]['allowed'] = True
+        user_status[user_id]['msg_count'] = 0  # Reset message count
+        await message.reply(f"User {user_id} has been allowed to send messages.")
+    else:
+        await message.reply("Please provide a user ID.")
+
+# Command to disallow a user
+@app.on_message(filters.command("disallow") & filters.user(OWNER_ID))
+async def disallow(client, message: Message):
+    # Disallow the user who sends the command
+    if len(message.command) > 1:
+        user_id = int(message.command[1])
+        user_status[user_id]['allowed'] = False
+        await message.reply(f"User {user_id} has been disallowed from sending messages.")
+    else:
+        await message.reply("Please provide a user ID.")
+
+# Message handler to monitor user messages
+@app.on_message(filters.text)
+async def monitor_messages(client, message: Message):
+    user_id = message.from_user.id
+
+    # Check if user is allowed to send messages
+    if not user_status[user_id]['allowed']:
+        user_status[user_id]['msg_count'] += 1
+
+        # If user sends 3 messages without permission, block them
+        if user_status[user_id]['msg_count'] >= 3:
+            await message.reply("You are not allowed to send more messages. You have been blocked.")
+            await message.chat.ban_member(user_id)
+            user_status[user_id]['msg_count'] = 0  # Reset message count after block
+    else:
+        # If allowed, reset the message count
+        user_status[user_id]['msg_count'] = 0
+
 
 if __name__ == "__main__":
     loop.run_until_complete(main())
