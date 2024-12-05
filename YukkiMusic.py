@@ -1758,7 +1758,7 @@ def approve_user_in_db(user_id, username, first_name):
 
 
 # sukh
-from pyrogram import Client, InlineKeyboardMarkup, InlineKeyboardButton, InputTextMessageContent, InlineQueryResultArticle
+from pyrogram import InlineKeyboardMarkup, InlineKeyboardButton, InputTextMessageContent, InlineQueryResultArticle
 import re
 
 @app.on_message(
