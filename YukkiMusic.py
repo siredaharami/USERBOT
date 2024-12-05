@@ -193,7 +193,7 @@ async def main():
     LOGGER.info("✅ ʙᴏᴛ ꜱᴛᴀʀᴛ ")
     try:
         await bot.start()
-        except Exception as e:
+    except Exception as e:
         pass
     if LOG_GROUP_ID != 0:
         try:
