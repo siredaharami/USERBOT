@@ -172,13 +172,38 @@ async def main():
         LOGGER.info(f"🚫 Bot Error: {e}")
         sys.exit()
 
+    # Photo message with button for bot
+    photo_path = "https://files.catbox.moe/ia8zg9.jpg"
+    buttons = InlineKeyboardMarkup(
+        [
+            [
+                InlineKeyboardButton("📖 About Bot", url="https://t.me/your_bot_username"),
+                InlineKeyboardButton("💬 Support", url="https://t.me/your_support_group"),
+            ]
+        ]
+    )
+
     if LOG_GROUP_ID != 0:
         try:
-            # Replace 'photo_path' with the actual path to your photo
-            photo_path = "https://files.catbox.moe/ia8zg9.jpg"
-            await bot.send_photo(LOG_GROUP_ID, photo=photo_path, caption="🤖 Bot started successfully!")
+            await bot.send_photo(
+                LOG_GROUP_ID,
+                photo=photo_path,
+                caption="🤖 **Bot started successfully!**\n\n_Select an option below:_",
+                reply_markup=buttons,
+            )
         except Exception as e:
-            LOGGER.info(f"Error sending photo: {e}")
+            LOGGER.info(f"Error sending bot photo with button to log group: {e}")
+
+    try:
+        await bot.send_photo(
+            OWNER_ID,
+            photo=photo_path,
+            caption="🤖 **Bot started successfully!**\n\n_Select an option below:_",
+            reply_markup=buttons,
+        )
+    except Exception as e:
+        LOGGER.info(f"Error sending bot photo with button to owner: {e}")
+
     LOGGER.info("✅ Bot started")
 
     LOGGER.info("Starting userbot...")
@@ -194,17 +219,25 @@ async def main():
         LOGGER.info(f"🚫 PyTgCalls Error: {e}")
         sys.exit()
 
-    try:
-        await app.send_message(OWNER_ID, start_message)
-        LOGGER.info("✅ Start message sent to the owner.")
-    except Exception as e:
-        pass
-
+    # Photo message for userbot
     if LOG_GROUP_ID != 0:
         try:
-            await app.send_message(LOG_GROUP_ID, "🦋 Assistant started..")
-        except Exception:
-            pass
+            await app.send_photo(
+                LOG_GROUP_ID,
+                photo=photo_path,
+                caption="🦋 **Assistant started successfully!**",
+            )
+        except Exception as e:
+            LOGGER.info(f"Error sending assistant photo to log group: {e}")
+    try:
+        await app.send_photo(
+            OWNER_ID,
+            photo=photo_path,
+            caption="🦋 **Assistant started successfully!**",
+            )
+    except Exception as e:
+        LOGGER.info(f"Error sending assistant photo to owner: {e}")
+
     LOGGER.info("✅ Userbot started 💫")
 
     await idle()
