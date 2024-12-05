@@ -1753,11 +1753,6 @@ def approve_user_in_db(user_id, username, first_name):
     })
 
 # sukh
-
-from pyrogram import InlineQueryResultPhoto, InlineKeyboardMarkup, InlineKeyboardButton, InputTextMessageContent
-import re
-
-# Add Alive Command for Userbot
 from pyrogram import InlineQueryResultPhoto, InlineKeyboardMarkup, InlineKeyboardButton, InputTextMessageContent
 import re
 
