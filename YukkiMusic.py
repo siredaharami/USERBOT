@@ -5,6 +5,7 @@ import shutil
 import yt_dlp
 import traceback
 import subprocess
+import requests
 
 from os import getenv
 from io import BytesIO
