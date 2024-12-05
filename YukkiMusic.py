@@ -1610,60 +1610,29 @@ async def stopSpam(_, message: Message):
 
 
 
-# Define the /alive command
-@app.on_message(filters.command("alive"))
-async def alive(client, message):
-    # Inline buttons
+
+from pyrogram import Client, filters
+from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton
+
+# /alive command handler
+@app.on_message(filters.command("alive") & filters.private)
+async def alive_handler(client, message):
+    # Define buttons
     buttons = InlineKeyboardMarkup(
         [
-            [
-                InlineKeyboardButton("Source Code", url="https://github.com"),
-                InlineKeyboardButton("Developer", url="https://t.me/YourUsername")
-            ],
-            [
-                InlineKeyboardButton("Uptime Status", callback_data="uptime"),
-                InlineKeyboardButton("Support", url="https://t.me/YourSupportGroup")
-            ]
+            [InlineKeyboardButton("GitHub", url="https://github.com")],
+            [InlineKeyboardButton("Support", url="https://t.me/support_chat")],
         ]
     )
-
-    # Image for the reply
-    image_url = "https://via.placeholder.com/800x400.png?text=Bot+is+Alive!"  # Replace with your desired image URL
-
-    # Send the reply
-    await client.send_photo(
-        chat_id=message.chat.id,
-        photo=image_url,
-        caption="✅ **I'm alive and running!**\n\n🔹 **Bot Version:** 1.0.0\n🔹 **Developer:** [YourUsername](https://t.me/YourUsername)\n🔹 **Language:** Python (Pyrogram)",
+    
+    # Respond with a message and buttons
+    await message.reply_text(
+        "Hello! I am alive and running! 🟢\nChoose an option below:",
         reply_markup=buttons
     )
-
-# Handle the "uptime" callback
-@app.on_callback_query(filters.regex("uptime"))
-async def uptime_callback(client, callback_query):
-    # Example uptime logic (replace with real data if available)
-    uptime_message = "✅ **Uptime:** 3 days, 4 hours, 12 minutes."
-    await callback_query.answer(uptime_message, show_alert=True)
-
-
-from datetime import datetime
-
-@app.on_message(cdx("pg"))
-async def ping(client, message):
-    start = datetime.now()
-    end = datetime.now()
-    ms = (end - start).microseconds / 1000
-    m = await eor(message, "**🤖 Ping !**")
-    await m.edit(f"**🤖 Pinged !\nLatency:** `{ms}` ms")
-
-
-
-__NAME__ = "Ping"
-__MENU__ = """
-`.ping` - **Check Ping Latency
-Of Your Userbot Server.**
-"""
 
 
 if __name__ == "__main__":
     loop.run_until_complete(main())
+    print("Bot is running...")
+    app.run()
