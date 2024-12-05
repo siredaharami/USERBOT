@@ -21,7 +21,8 @@ from logging.handlers import RotatingFileHandler
 from git import Repo
 from git.exc import GitCommandError, InvalidGitRepositoryError
 from motor.motor_asyncio import AsyncIOMotorClient as _mongo_async_
-
+from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton, InputMediaPhoto
+from pyrogram import filters
 from pyrogram import Client, filters as pyrofl
 from pytgcalls import PyTgCalls, filters as pytgfl
 
@@ -1544,6 +1545,44 @@ async def stopSpam(_, message: Message):
     chat_name = message.chat.title or message.chat.first_name
     del spamTask[chat_id]
     await app.delete(message, f"Spam task stopped for {chat_name}.")
+
+
+
+# Define the /alive command
+@app.on_message(filters.command("alive"))
+async def alive(client, message):
+    # Inline buttons
+    buttons = InlineKeyboardMarkup(
+        [
+            [
+                InlineKeyboardButton("Source Code", url="https://github.com"),
+                InlineKeyboardButton("Developer", url="https://t.me/YourUsername")
+            ],
+            [
+                InlineKeyboardButton("Uptime Status", callback_data="uptime"),
+                InlineKeyboardButton("Support", url="https://t.me/YourSupportGroup")
+            ]
+        ]
+    )
+
+    # Image for the reply
+    image_url = "https://via.placeholder.com/800x400.png?text=Bot+is+Alive!"  # Replace with your desired image URL
+
+    # Send the reply
+    await client.send_photo(
+        chat_id=message.chat.id,
+        photo=image_url,
+        caption="✅ **I'm alive and running!**\n\n🔹 **Bot Version:** 1.0.0\n🔹 **Developer:** [YourUsername](https://t.me/YourUsername)\n🔹 **Language:** Python (Pyrogram)",
+        reply_markup=buttons
+    )
+
+# Handle the "uptime" callback
+@app.on_callback_query(filters.regex("uptime"))
+async def uptime_callback(client, callback_query):
+    # Example uptime logic (replace with real data if available)
+    uptime_message = "✅ **Uptime:** 3 days, 4 hours, 12 minutes."
+    await callback_query.answer(uptime_message, show_alert=True)
+
 
 
 if __name__ == "__main__":
