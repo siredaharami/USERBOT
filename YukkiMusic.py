@@ -95,6 +95,10 @@ def rgx(pattern: Union[str, Pattern]):
 
 bot_owner_only = pyrofl.user(OWNER_ID)
 
+spam_chats = []
+SUDO_USER = SUDO_USERS
+SUDO_USERS.append(OWNER_ID)
+
 # Userbot Client
 app = Client(
     name="Userbot",
