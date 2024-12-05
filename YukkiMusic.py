@@ -1815,8 +1815,7 @@ async def alive_menu_logo(answer):
 💥 **Bot Version**: `{__version__}`  
 ⚡️ **Ping**: `{}ms`
 
-Powered By: [ARMAN KHAN](https://t.me/AK_ARMAN_7)
-            """.format("Ping Time"),
+Powered By: [ARMAN KHAN](https://t.me/AK_ARMAN_7)"""
             reply_markup=InlineKeyboardMarkup(button),
         )
     )
