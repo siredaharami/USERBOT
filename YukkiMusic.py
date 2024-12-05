@@ -1093,8 +1093,6 @@ async def handle_song(bot, message):
 
 #sudo
 
-import SUDO_USER
-
 @app.on_message(filters.command(["addsudo"]) & filters.user(OWNER_ID))
 async def addsudo(client: Client, message: Message):
     try:
