@@ -1615,7 +1615,7 @@ from pyrogram import Client, filters
 from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 
 # /alive command handler
-@app.on_message(filters.command("alive"))
+@bot.on_message(filters.command("alive"))
 async def alive_handler(client, message):
     # Define buttons
     buttons = InlineKeyboardMarkup(
@@ -1634,5 +1634,3 @@ async def alive_handler(client, message):
 
 if __name__ == "__main__":
     loop.run_until_complete(main())
-    print("Bot is running...")
-    app.run()
