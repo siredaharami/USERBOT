@@ -1152,9 +1152,7 @@ async def handle_song(bot, message):
 
 #sudo
 
-@app.on_message(
-    filters.command(["addsudo"], ".") & (filters.me | filters.user(bot_owner_only))
-)
+@app.on_message(cdx(["addsudo"]) & bot_owner_only)
 async def addsudo(client: Client, message: Message):
     try:
         if not message.reply_to_message:
@@ -1180,9 +1178,7 @@ async def addsudo(client: Client, message: Message):
         await message.reply_text(f"**ERROR:** `{e}`")
         return
 
-@app.on_message(
-    filters.command(["rmsudo"], ".") & (filters.me | filters.user(bot_owner_only))
-)
+@app.on_message(cdx(["rmsudo"]) & bot_owner_only)
 async def rmsudo(client: Client, message: Message):
     try:
         if not message.reply_to_message:
