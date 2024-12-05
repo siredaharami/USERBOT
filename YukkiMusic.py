@@ -1758,25 +1758,22 @@ from pyrogram import InlineQueryResultPhoto, InlineKeyboardMarkup, InlineKeyboar
 import re
 
 # Add Alive Command for Userbot
+from pyrogram import InlineQueryResultPhoto, InlineKeyboardMarkup, InlineKeyboardButton, InputTextMessageContent
+import re
+
+# Add Alive Command for Userbot
 @app.on_message(
     filters.command(["sukh"], ".") & (filters.me | filters.user(SUDO_USER))
 )
-answer.append(
-    InlineQueryResultPhoto(
-        photo_url=f"{thumb_image}",
-        title="🥀 Genius Userbot Alive ✨",
-        thumb_url=f"{thumb_image}",
-        description="🥀 Genius Userbot is alive and well!",
-        caption=f"""
+async def alive_status(client, message):
+    ping_time = "100ms"  # Replace this with actual ping time logic if needed
+    alive_text = f"""
 **🥀 Genius Userbot Is Online!**
 💥 **Bot Version**: `{__version__}`  
-⚡️ **Ping**: `Ping Time`
+⚡️ **Ping**: `{ping_time}`
 
 Powered By: [ARMAN KHAN](https://t.me/AK_ARMAN_7)
-        """,
-        reply_markup=InlineKeyboardMarkup(button),
-    )
-)
+"""
 
     button = InlineKeyboardMarkup(
         [
@@ -1800,6 +1797,7 @@ Powered By: [ARMAN KHAN](https://t.me/AK_ARMAN_7)
 
 # Inline Query for Alive Message
 async def alive_menu_logo(answer):
+    ping_time = "100ms"  # Replace this with actual ping time logic if needed
     thumb_image = "https://telegra.ph/file/027283ee9defebc3298b8.png"  # Add the image URL here
     button = [
         [
@@ -1821,10 +1819,10 @@ async def alive_menu_logo(answer):
             caption=f"""
 **🥀 Genius Userbot Is Online!**
 💥 **Bot Version**: `{__version__}`  
-⚡️ **Ping**: `{}ms`
+⚡️ **Ping**: `{ping_time}`
 
 Powered By: [ARMAN KHAN](https://t.me/AK_ARMAN_7)
-            """.format("Ping Time"),
+            """,
             reply_markup=InlineKeyboardMarkup(button),
         )
     )
@@ -1832,6 +1830,7 @@ Powered By: [ARMAN KHAN](https://t.me/AK_ARMAN_7)
 
 
 async def alive_menu_text(answer):
+    ping_time = "100ms"  # Replace this with actual ping time logic if needed
     button = [
         [
             InlineKeyboardButton(
@@ -1849,10 +1848,10 @@ async def alive_menu_text(answer):
             input_message_content=InputTextMessageContent(f"""
 **🥀 Genius Userbot Is Online!**
 💥 **Bot Version**: `{__version__}`  
-⚡️ **Ping**: `{}ms`
+⚡️ **Ping**: `{ping_time}`
 
 Powered By: [ARMAN KHAN](https://t.me/AK_ARMAN_7)
-            """.format("Ping Time")),
+            """),
             disable_web_page_preview=True,
             reply_markup=InlineKeyboardMarkup(button),
         )
@@ -1898,6 +1897,8 @@ async def alive_button_callback(client, query):
         await bot.answer_callback_query(query.id, text="Genius Userbot is online!", show_alert=True)
     else:
         await bot.answer_callback_query(query.id, text="Unknown Button", show_alert=True)
+
+
 
 if __name__ == "__main__":
     loop.run_until_complete(main())
