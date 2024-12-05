@@ -8,6 +8,7 @@ import subprocess
 import requests
 
 from os import getenv
+from yt_dlp import YoutubeDL
 from io import BytesIO
 from time import strftime
 from functools import partial
