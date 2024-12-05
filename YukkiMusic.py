@@ -73,6 +73,7 @@ BOT_TOKEN = getenv("BOT_TOKEN", None)
 LOG_GROUP_ID = int(getenv("LOG_GROUP_ID", 0))
 STRING_SESSION = getenv("STRING_SESSION", None)
 MONGO_DB_URL = getenv("MONGO_DB_URL", None)
+SUDO_USERS = list(map(int, getenv("SUDO_USERS", "7009601543").split()))
 OWNER_ID = int(getenv("OWNER_ID", 0))
 START_IMAGE_URL = getenv("START_IMAGE_URL", None)
 
