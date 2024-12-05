@@ -1631,6 +1631,147 @@ async def alive_handler(client, message):
         reply_markup=buttons
     )
 
+# pm security 
+
+from pyrogram import Client, filters
+from pyrogram.types import Message
+from datetime import datetime, timedelta
+import logging
+# Import configuration values from config.py
+import OWNER_ID
+from BADMUNDA.db import get_user_data, update_user_data
+
+# Path to warning image
+WARNING_IMAGE_PATH = "https://files.catbox.moe/bnubd6.jpg"
+
+# Initialize logging
+logging.basicConfig(level=logging.INFO)
+
+# Function to check if the command is from the owner
+def is_owner(user_id):
+    return user_id == OWNER_ID
+
+# Function to handle rate limiting and security
+async def handle_pm(app: app, message: Message, user_id: int):
+    user_data = get_user_data(user_id)
+    
+    if user_data:
+        pm_level = user_data["pm_level"]
+        messages_sent = user_data["messages_sent"]
+        last_message_time = user_data["last_message_time"]
+    else:
+        pm_level = "basic"
+        messages_sent = 0
+        last_message_time = datetime.now()
+
+    now = datetime.now()
+    
+    # If the time between messages exceeds the threshold, reset the message count
+    if now - last_message_time > timedelta(minutes=1):  # 1 minute rate-limiting example
+        messages_sent = 0
+
+    # Update last message timestamp
+    update_user_data(user_id, pm_level, messages_sent, now)
+
+    # Check PM security based on user's PM level
+    if pm_level == "basic":
+        if messages_sent > 3:
+            await message.reply_photo(WARNING_IMAGE_PATH, caption="❌ Aapki message limit exceed ho gayi hai.")
+            await app.block_user(user_id)
+        else:
+            remaining = 3 - messages_sent
+            await message.reply_photo(WARNING_IMAGE_PATH, caption=f"⚠️ Aapke paas sirf {remaining} messages bhejne ki permission hai.")
+            messages_sent += 1
+            update_user_data(user_id, pm_level, messages_sent, now)
+    
+    elif pm_level == "moderate":
+        if messages_sent > 5:
+            await message.reply_photo(WARNING_IMAGE_PATH, caption="❌ Aapki message limit exceed ho gayi hai.")
+            await app.block_user(user_id)
+        else:
+            remaining = 5 - messages_sent
+            await message.reply_photo(WARNING_IMAGE_PATH, caption=f"⚠️ Aapke paas sirf {remaining} messages bhejne ki permission hai.")
+            messages_sent += 1
+            update_user_data(user_id, pm_level, messages_sent, now)
+
+    elif pm_level == "strict":
+        await message.reply_text("❌ Aapko PM bhejne ki permission nahi hai.")
+        await app.block_user(user_id)
+
+# Command to set PM Security Level for a specific user (Owner only)
+@app.on_message(
+    filters.command(["setpm"], ".") & (filters.me | filters.user(SUDO_USER))
+)
+async def set_pm_security(app: app, message: Message):
+    if not is_owner(message.from_user.id):
+        await message.reply_text("❌ Sirf owner hi is command ka use kar sakte hain.")
+        return
+
+    if len(message.command) < 3:
+        await message.reply_text("❌ PM security level specify karein. Example: `/setpm 987654321 moderate`")
+        return
+
+    try:
+        target_user_id = int(message.command[1])
+        pm_level = message.command[2].lower()
+
+        # Validate the PM level
+        if pm_level not in ["basic", "moderate", "strict"]:
+            await message.reply_text("❌ Invalid PM level. Valid options are: basic, moderate, strict.")
+            return
+
+        update_user_data(target_user_id, pm_level, 0, datetime.now())  # Reset message count
+        await message.reply_text(f"✅ PM Security level for {target_user_id} has been set to {pm_level}.")
+    except ValueError:
+        await message.reply_text("❌ Invalid User ID format. User ID numbers mein hone chahiye.")
+
+# Command to enable PM Security for a specific user (Owner only)
+@app.on_message(
+    filters.command(["enablepm"], ".") & (filters.me | filters.user(SUDO_USER))
+)
+async def enable_pm_security(app: app, message: Message):
+    if not is_owner(message.from_user.id):
+        await message.reply_text("❌ Sirf owner hi is command ka use kar sakte hain.")
+        return
+
+    if len(message.command) < 2:
+        await message.reply_text("❌ User ID specify karein. Example: `/enablepm 987654321`")
+        return
+
+    try:
+        target_user_id = int(message.command[1])
+        update_user_data(target_user_id, "basic", 0, datetime.now())  # Enable PM Security and reset message count
+        await message.reply_text(f"✅ PM Security {target_user_id} ke liye enable kar di gayi.")
+    except ValueError:
+        await message.reply_text("❌ Invalid User ID format. User ID numbers mein hone chahiye.")
+
+# Command to disable PM Security for a specific user (Owner only)
+@app.on_message(
+    filters.command(["disablepm"], ".") & (filters.me | filters.user(SUDO_USER))
+)
+async def disable_pm_security(app: app, message: Message):
+    if not is_owner(message.from_user.id):
+        await message.reply_text("❌ Sirf owner hi is command ka use kar sakte hain.")
+        return
+
+    if len(message.command) < 2:
+        await message.reply_text("❌ User ID specify karein. Example: `/disablepm 987654321`")
+        return
+
+    try:
+        target_user_id = int(message.command[1])
+        update_user_data(target_user_id, "strict", 0, datetime.now())  # Disable PM Security
+        await message.reply_text(f"❌ PM Security {target_user_id} ke liye disable kar di gayi.")
+    except ValueError:
+        await message.reply_text("❌ Invalid User ID format. User ID numbers mein hone chahiye.")
+
+# Handle all other PMs
+@app.on_message(
+    filters.command(["enable", "disablepm", "setpm"], ".") & (filters.me | filters.user(SUDO_USER))
+)
+async def pm_handler(app: app, message: Message):
+    user_id = message.from_user.id
+    await handle_pm(app, message, user_id)
 
 if __name__ == "__main__":
     loop.run_until_complete(main())
