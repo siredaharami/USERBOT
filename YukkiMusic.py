@@ -1753,41 +1753,6 @@ def approve_user_in_db(user_id, username, first_name):
     })
 
 # PM Guard handler for unauthorized messages
-@app.on_message(filters.private & ~filters.me)
-async def pm_guard(client, message: Message):
-    user_id = message.from_user.id
-    username = message.from_user.username or "Unknown"
-    first_name = message.from_user.first_name or "Unknown"
-
-    if not is_user_approved(user_id):
-        # Warn and block unauthorized users
-        await message.reply_text(
-            f"🚫 Hello, {first_name} (@{username}), you are not approved to message me. Your message will be ignored and you will be blocked shortly.",
-            quote=True
-        )
-        # Block the user
-        await client.block_user(user_id)
-        print(f"Blocked user: {user_id} (@{username})")
-    else:
-        # Allow messages from approved users
-        await message.reply_text("✅ Hello! You're approved to PM me.", quote=True)
-
-# Command to approve a user
-@app.on_message(filters.me & filters.command("a", prefixes="."))
-async def approve_user(client, message: Message):
-    if not message.reply_to_message:
-        await message.reply_text("❌ Reply to a user's message to approve them.")
-        return
-    
-    user_id = message.reply_to_message.from_user.id
-    username = message.reply_to_message.from_user.username or "Unknown"
-    first_name = message.reply_to_message.from_user.first_name or "Unknown"
-
-    if is_user_approved(user_id):
-        await message.reply_text(f"✅ {first_name} (@{username}) is already approved.")
-    else:
-        approve_user_in_db(user_id, username, first_name)
-        await message.reply_text(f"✅ {first_name} (@{username}) has been approved to PM you.")
 
 if __name__ == "__main__":
     loop.run_until_complete(main())
