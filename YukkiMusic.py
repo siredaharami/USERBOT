@@ -344,7 +344,7 @@ def get_readable_time(seconds: int) -> str:
     count %= 60
     return f"{days}d {hours}h {minutes}m {count}s"
 
-@app.on_message(cdx(filters.command(["ping"]) & filters.user(SUDO_USER)))
+@app.on_message(cdx(["ping"]) & SUDO_USER)
 async def ping_command(client, message):
     # Measure response time
     start_time = time.time()
@@ -375,7 +375,7 @@ async def ping_command(client, message):
     
 #help
 
-@app.on_message(filters.command(["help"]) & filters.user(SUDO_USER))
+@app.on_message(cdx(["help"]) & SUDO_USER)
 async def start_message_private(client, message):
     mention = message.from_user.mention
     caption = f"""
