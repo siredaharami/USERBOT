@@ -132,6 +132,7 @@ mongodb = mongo_async_cli.Badxdb
 __start_time__ = time.time()
 
 # Start and Run
+
 async def main():
     LOGGER.info("Updating directories...")
     if "cache" not in os.listdir():
@@ -165,6 +166,7 @@ async def main():
 
     LOGGER.info("Required variables collected.")
 
+    # Starting Bot
     LOGGER.info("Starting bot...")
     try:
         await bot.start()
@@ -172,9 +174,9 @@ async def main():
         LOGGER.info(f"🚫 Bot Error: {e}")
         sys.exit()
 
-    # Photo message with button for bot
-    photo_path = "https://files.catbox.moe/ia8zg9.jpg"
-    buttons = InlineKeyboardMarkup(
+    # Bot Photo and Buttons
+    bot_photo_path = "https://files.catbox.moe/ia8zg9.jpg"  # Replace with bot-specific photo
+    bot_buttons = InlineKeyboardMarkup(
         [
             [
                 InlineKeyboardButton("📖 About Bot", url="https://t.me/your_bot_username"),
@@ -187,25 +189,26 @@ async def main():
         try:
             await bot.send_photo(
                 LOG_GROUP_ID,
-                photo=photo_path,
+                photo=bot_photo_path,
                 caption="🤖 **Bot started successfully!**\n\n_Select an option below:_",
-                reply_markup=buttons,
+                reply_markup=bot_buttons,
             )
         except Exception as e:
-            LOGGER.info(f"Error sending bot photo with button to log group: {e}")
+            LOGGER.info(f"Error sending bot photo with buttons to log group: {e}")
 
     try:
         await bot.send_photo(
             OWNER_ID,
-            photo=photo_path,
+            photo=bot_photo_path,
             caption="🤖 **Bot started successfully!**\n\n_Select an option below:_",
-            reply_markup=buttons,
+            reply_markup=bot_buttons,
         )
     except Exception as e:
-        LOGGER.info(f"Error sending bot photo with button to owner: {e}")
+        LOGGER.info(f"Error sending bot photo with buttons to owner: {e}")
 
     LOGGER.info("✅ Bot started")
 
+    # Starting Userbot
     LOGGER.info("Starting userbot...")
     try:
         await app.start()
@@ -219,26 +222,47 @@ async def main():
         LOGGER.info(f"🚫 PyTgCalls Error: {e}")
         sys.exit()
 
-    # Photo message for userbot
+    # Userbot Photo and Buttons
+    userbot_photo_path = "https://files.catbox.moe/my1z4d.jpg"  # Replace with userbot-specific photo
+    userbot_buttons = InlineKeyboardMarkup(
+        [
+            [
+                InlineKeyboardButton("🔄 Reload", callback_data="reload_userbot"),
+                InlineKeyboardButton("❌ Stop", callback_data="stop_userbot"),
+            ]
+        ]
+    )
+
     if LOG_GROUP_ID != 0:
         try:
             await app.send_photo(
                 LOG_GROUP_ID,
-                photo=photo_path,
-                caption="🦋 **Assistant started successfully!**",
+                photo=userbot_photo_path,
+                caption="🦋 **Assistant started successfully!**\n\n_Choose an action below:_",
+                reply_markup=userbot_buttons,
             )
         except Exception as e:
-            LOGGER.info(f"Error sending assistant photo to log group: {e}")
+            LOGGER.info(f"Error sending userbot photo with buttons to log group: {e}")
     try:
         await app.send_photo(
             OWNER_ID,
-            photo=photo_path,
+            photo=userbot_photo_path,
             caption="🦋 **Assistant started successfully!**",
-            )
+        )
     except Exception as e:
-        LOGGER.info(f"Error sending assistant photo to owner: {e}")
+        LOGGER.info(f"Error sending userbot photo to owner: {e}")
 
     LOGGER.info("✅ Userbot started 💫")
+
+    # Inline Button Handling (for callback queries)
+    @app.on_callback_query()
+    async def handle_callback_query(client, callback_query):
+        data = callback_query.data
+        if data == "reload_userbot":
+            await callback_query.answer("Reloading Userbot...", show_alert=True)
+        elif data == "stop_userbot":
+            await callback_query.answer("Stopping Userbot...", show_alert=True)
+            await app.stop()
 
     await idle()
 
