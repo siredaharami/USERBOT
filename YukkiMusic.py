@@ -1725,52 +1725,69 @@ async def set_pm_security(app: app, message: Message):
         await message.reply_text("❌ Invalid User ID format. User ID numbers mein hone chahiye.")
 
 # Command to enable PM Security for a specific user (Owner only)
-@app.on_message(
-    filters.command(["enablepm"], ".") & (filters.me | filters.user(SUDO_USER))
-)
-async def enable_pm_security(app: app, message: Message):
-    if not is_owner(message.from_user.id):
-        await message.reply_text("❌ Sirf owner hi is command ka use kar sakte hain.")
-        return
+from pyrogram import Client, filters
+from pyrogram.types import Message
+from pymongo import MongoClient
 
-    if len(message.command) < 2:
-        await message.reply_text("❌ User ID specify karein. Example: `/enablepm 987654321`")
-        return
 
-    try:
-        target_user_id = int(message.command[1])
-        update_user_data(target_user_id, "basic", 0, datetime.now())  # Enable PM Security and reset message count
-        await message.reply_text(f"✅ PM Security {target_user_id} ke liye enable kar di gayi.")
-    except ValueError:
-        await message.reply_text("❌ Invalid User ID format. User ID numbers mein hone chahiye.")
+# MongoDB configuration
+MONGO_URI = "mongodb://localhost:27017"  # Replace with your MongoDB URI
+DB_NAME = "pm_guard_bot"  # Database name
+COLLECTION_NAME = "approved_users"  # Collection name
 
-# Command to disable PM Security for a specific user (Owner only)
-@app.on_message(
-    filters.command(["disablepm"], ".") & (filters.me | filters.user(SUDO_USER))
-)
-async def disable_pm_security(app: app, message: Message):
-    if not is_owner(message.from_user.id):
-        await message.reply_text("❌ Sirf owner hi is command ka use kar sakte hain.")
-        return
+# Initialize MongoDB client
+mongo_client = MongoClient(MONGO_URI)
+db = mongo_client[DB_NAME]
+approved_users_collection = db[COLLECTION_NAME]
 
-    if len(message.command) < 2:
-        await message.reply_text("❌ User ID specify karein. Example: `/disablepm 987654321`")
-        return
+# Function to check if a user is approved
+def is_user_approved(user_id):
+    return approved_users_collection.find_one({"user_id": user_id}) is not None
 
-    try:
-        target_user_id = int(message.command[1])
-        update_user_data(target_user_id, "strict", 0, datetime.now())  # Disable PM Security
-        await message.reply_text(f"❌ PM Security {target_user_id} ke liye disable kar di gayi.")
-    except ValueError:
-        await message.reply_text("❌ Invalid User ID format. User ID numbers mein hone chahiye.")
+# Function to approve a user
+def approve_user_in_db(user_id, username, first_name):
+    approved_users_collection.insert_one({
+        "user_id": user_id,
+        "username": username,
+        "first_name": first_name
+    })
 
-# Handle all other PMs
-@app.on_message(
-    filters.command(["enable", "disablepm", "setpm"], ".") & (filters.me | filters.user(SUDO_USER))
-)
-async def pm_handler(app: app, message: Message):
+# PM Guard handler for unauthorized messages
+@app.on_message(filters.private & ~filters.me)
+async def pm_guard(client, message: Message):
     user_id = message.from_user.id
-    await handle_pm(app, message, user_id)
+    username = message.from_user.username or "Unknown"
+    first_name = message.from_user.first_name or "Unknown"
+
+    if not is_user_approved(user_id):
+        # Warn and block unauthorized users
+        await message.reply_text(
+            f"🚫 Hello, {first_name} (@{username}), you are not approved to message me. Your message will be ignored and you will be blocked shortly.",
+            quote=True
+        )
+        # Block the user
+        await client.block_user(user_id)
+        print(f"Blocked user: {user_id} (@{username})")
+    else:
+        # Allow messages from approved users
+        await message.reply_text("✅ Hello! You're approved to PM me.", quote=True)
+
+# Command to approve a user
+@app.on_message(filters.me & filters.command("a", prefixes="."))
+async def approve_user(client, message: Message):
+    if not message.reply_to_message:
+        await message.reply_text("❌ Reply to a user's message to approve them.")
+        return
+    
+    user_id = message.reply_to_message.from_user.id
+    username = message.reply_to_message.from_user.username or "Unknown"
+    first_name = message.reply_to_message.from_user.first_name or "Unknown"
+
+    if is_user_approved(user_id):
+        await message.reply_text(f"✅ {first_name} (@{username}) is already approved.")
+    else:
+        approve_user_in_db(user_id, username, first_name)
+        await message.reply_text(f"✅ {first_name} (@{username}) has been approved to PM you.")
 
 if __name__ == "__main__":
     loop.run_until_complete(main())
