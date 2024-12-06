@@ -1748,9 +1748,9 @@ from pyrogram import Client, filters
 from gtts import gTTS
 import os
 from pytgcalls import PyTgCalls
-from pytgcalls.types import AudioPiped
 
-# Initialize PyTgCalls for handling group calls
+
+# Initialize PyTgCalls
 pycalls = PyTgCalls(app)
 
 @app.on_message(filters.command("speak", prefixes=["/"]) & filters.group)
@@ -1769,17 +1769,20 @@ async def speak_command(client, message):
 
     chat_id = message.chat.id
     try:
-        # Join the group call and play the TTS file
-        await pycalls.join_group_call(chat_id, AudioPiped(file_path))
+        # Join the group call and send the audio file (No streaming needed)
+        await pycalls.join_group_call(chat_id)
+        
+        # Send the audio file as a voice message
+        await app.send_voice(chat_id, file_path)
+        
         await message.reply("Started call and playing the TTS audio.")
     except Exception as e:
         await message.reply(f"Error starting call: {e}")
     finally:
-        # Clean up the generated file after playing
+        # Clean up the generated file after sending
         if os.path.exists(file_path):
             os.remove(file_path)
             
-
 
 
 
