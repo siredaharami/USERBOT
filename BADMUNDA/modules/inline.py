@@ -3,7 +3,7 @@ from pyrogram import Client, InlineQueryResultPhoto, InlineQueryResultArticle, I
 from BADMUNDA.modules.buttons import paginate_plugins
 from BADMUNDA.modules.wrapper import inline_wrapper
 from pyrogram.types import InlineQuery
-from yu import __version__
+from YukkiMusic import __version__
 
 async def help_menu_logo(answer):
     image = None
