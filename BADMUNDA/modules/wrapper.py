@@ -1,7 +1,7 @@
 from pyrogram.types import *
 from traceback import format_exc
 
-from YukkiMusic import SUDOERS
+from YukkiMusic import SUDO_USER as SUDOERS
 from YukkiMusic import app, bot
 
 def super_user_only(mystic):
