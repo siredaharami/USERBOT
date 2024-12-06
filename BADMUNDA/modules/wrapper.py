@@ -1,8 +1,7 @@
-from pyrogram.types import *
+from pyrogram import Client
+from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup, InlineQueryResultPhoto, InlineQueryResultArticle, InputTextMessageContent
 from traceback import format_exc
-
-from YukkiMusic import SUDO_USER as SUDOERS
-from YukkiMusic import app, bot
+from YukkiMusic import SUDO_USER as SUDOERS, app
 
 def super_user_only(mystic):
     async def wrapper(client, message):
@@ -15,30 +14,21 @@ def super_user_only(mystic):
             
     return wrapper
 
-
-
 def sudo_users_only(mystic):
     async def wrapper(client, message):
         try:
-            if (message.from_user.is_self or
-               message.from_user.id in SUDOERS
-            ):
+            if (message.from_user.is_self or message.from_user.id in SUDOERS):
                 return await mystic(client, message)
         except:
-            if (message.outgoing or
-               message.from_user.id in SUDOERS
-            ):
+            if (message.outgoing or message.from_user.id in SUDOERS):
                 return await mystic(client, message)
             
     return wrapper
     
-
 def cb_wrapper(func):
     async def wrapper(bot, cb):
         sudousers = SUDOERS
-        if (cb.from_user.id != app.me.id and
-            cb.from_user.id not in sudousers
-        ):
+        if cb.from_user.id != app.me.id and cb.from_user.id not in sudousers:
             return await cb.answer(
                 "❎ You Are Not A Sudo User❗",
                 cache_time=0,
@@ -55,20 +45,17 @@ def cb_wrapper(func):
         
     return wrapper
 
-
 def inline_wrapper(func):
-    from ... import __version__
+    from YukkiMusic import __version__
     async def wrapper(bot, query):
         sudousers = SUDOERS
-        if (query.from_user.id != app.me.id and
-            query.from_user.id not in sudousers
-        ):
+        if query.from_user.id != app.me.id and query.from_user.id not in sudousers:
             try:
                 button = [
                     [
                         InlineKeyboardButton(
                             "💥 Deploy Pbx Userbot ✨",
-                            url=f"https://github.com/Badhacker98/Pbx_TeamBot"
+                            url="https://github.com/Badhacker98/Pbx_TeamBot"
                         )
                     ]
                 ]
@@ -76,15 +63,13 @@ def inline_wrapper(func):
                     query.id,
                     cache_time=1,
                     results=[
-                        (
-                            InlineQueryResultPhoto(
-                                photo_url=f"https://telegra.ph/file/3063af27d9cc8580845e1.jpg",
-                                title="🥀 Pbx Userbot ✨",
-                                thumb_url=f"https://telegra.ph/file/3063af27d9cc8580845e1.jpg",
-                                description=f"🌷 Deploy Your Own PBXUSERBOT🌿...",
-                                caption=f"<b>🥀 Welcome » To » Pbx 🌷\n✅ Userbot {__version__} ✨...</b>",
-                                reply_markup=InlineKeyboardMarkup(button),
-                            )
+                        InlineQueryResultPhoto(
+                            photo_url="https://telegra.ph/file/3063af27d9cc8580845e1.jpg",
+                            title="🥀 Pbx Userbot ✨",
+                            thumb_url="https://telegra.ph/file/3063af27d9cc8580845e1.jpg",
+                            description="🌷 Deploy Your Own PBXUSERBOT🌿...",
+                            caption=f"<b>🥀 Welcome » To » Pbx 🌷\n✅ Userbot {__version__} ✨...</b>",
+                            reply_markup=InlineKeyboardMarkup(button),
                         )
                     ],
                 )
@@ -94,13 +79,11 @@ def inline_wrapper(func):
                     query.id,
                     cache_time=1,
                     results=[
-                        (
-                            InlineQueryResultArticle(
-                                title="",
-                                input_message_content=InputTextMessageContent(
-                                    f"||**🥀 Please, Deploy Your Own Pbx Userbot❗...\n\nRepo:** <i>https://github.com/Badhacker98/Pbx_TeamBot/</i>||"
-                                ),
-                            )
+                        InlineQueryResultArticle(
+                            title="",
+                            input_message_content=InputTextMessageContent(
+                                f"||**🥀 Please, Deploy Your Own Pbx Userbot❗...\n\nRepo:** <i>https://github.com/Badhacker98/Pbx_TeamBot/</i>||"
+                            ),
                         )
                     ],
                 )
@@ -108,7 +91,6 @@ def inline_wrapper(func):
                 print(str(e))
                 pass
         else:
-           return await func(bot, query)
+            return await func(bot, query)
 
     return wrapper
-
