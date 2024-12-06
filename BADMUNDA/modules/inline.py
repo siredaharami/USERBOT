@@ -1,4 +1,4 @@
-import asynci
+import asyncio
 from BADMUNDA.modules.buttons import *
 from BADMUNDA.modules.wrapper import *
 from pyrogram.types import *
