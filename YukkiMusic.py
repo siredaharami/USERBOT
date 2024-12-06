@@ -1748,8 +1748,8 @@ from pyrogram import Client, filters
 from gtts import gTTS
 import os
 from pytgcalls import PyTgCalls
-from pytgcalls.types.input_stream import AudioPiped
-from pytgcalls.types.input_stream.quality import HighQualityAudio
+from pytgcalls.types import AudioPiped
+from pytgcalls.types.quality import HighQualityAudio
 
 # Initialize PyTgCalls for group calls
 pycalls = PyTgCalls(app)
