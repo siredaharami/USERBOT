@@ -1275,6 +1275,16 @@ async def download_song(client, message):
         await m.edit("🙂 ᴀɴ ᴇʀʀᴏʀ ᴏᴄᴄᴜʀʀᴇᴅ! ᴄᴏɴᴛᴀᴄᴛ @ll_BAD_MUNDA_ll.")
         print(f"Error: {e}")
 
+__NAME__ = "ᴅᴏᴡɴʟᴏᴀᴅ"
+__MENU__ = """
+`.song` - , **Search songs and download..**
+`.ig .reel` - **link to download ig reel**
+`.yt` - **link to download you tube video **
+
+
+
+"""
+
 #restart
 
 @app.on_message(
