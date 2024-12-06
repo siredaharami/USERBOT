@@ -1,22 +1,21 @@
 import asyncio
-from pyrogram import Client, InlineQueryResultPhoto, InlineQueryResultArticle, InlineKeyboardMarkup, InputTextMessageContent
+from pyrogram.types import InlineQueryResultCachedPhoto, InlineQueryResultArticle, InlineKeyboardMarkup, InputTextMessageContent
+
 from BADMUNDA.modules.buttons import paginate_plugins
 from BADMUNDA.modules.wrapper import inline_wrapper
 from pyrogram.types import InlineQuery
 from YukkiMusic import __version__
 
 async def help_menu_logo(answer):
-    image = None
-    thumb_image = image or "https://telegra.ph/file/3063af27d9cc8580845e1.jpg"
+    thumb_image = "https://telegra.ph/file/3063af27d9cc8580845e1.jpg"
+    # Upload the image once to get a `file_id`, then replace `thumb_image` with the actual `file_id` in production.
     button = paginate_plugins(0, plugs, "help")
     
     answer.append(
-        InlineQueryResultPhoto(
-            photo_url=thumb_image,
+        InlineQueryResultArticle(
             title="💫 ʜᴇʟᴘ ᴍᴇɴᴜ  ✨",
-            thumb_url=thumb_image,
-            description="🥀 Open Help Menu Of PBXUSERBOT ✨...",
-            caption=f"""
+            input_message_content=InputTextMessageContent(
+                f"""
 **💫 ᴡᴇʟᴄᴏᴍᴇ ᴛᴏ ʜᴇʟᴘ ᴍᴇɴᴜ ᴏᴘ.
 ᴘʙx ᴜsᴇʀʙᴏᴛ  » {__version__} ✨
 
@@ -25,6 +24,8 @@ async def help_menu_logo(answer):
 
 🌹ᴘᴏᴡᴇʀᴇᴅ ʙʏ ☆  [ ᴘʙx ᴜᴘᴅᴀᴛᴇ ](https://t.me/HEROKUBIN_01) 🌹**
 """,
+                disable_web_page_preview=True
+            ),
             reply_markup=InlineKeyboardMarkup(button),
         )
     )
