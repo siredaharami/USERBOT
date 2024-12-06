@@ -1609,27 +1609,32 @@ async def stopSpam(_, message: Message):
     await app.delete(message, f"Spam task stopped for {chat_name}.")
 
 
+# help button
 
 
-from pyrogram import Client, filters
-from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 
-# /alive command handler
-@bot.on_message(filters.command("alive"))
-async def alive_handler(client, message):
-    # Define buttons
-    buttons = InlineKeyboardMarkup(
-        [
-            [InlineKeyboardButton("GitHub", url="https://github.com")],
-            [InlineKeyboardButton("Support", url="https://t.me/support_chat")],
-        ]
-    )
-    
-    # Respond with a message and buttons
-    await message.reply_text(
-        "Hello! I am alive and running! 🟢\nChoose an option below:",
-        reply_markup=buttons
-    )
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#end
 
 if __name__ == "__main__":
     loop.run_until_complete(main())
