@@ -1,12 +1,10 @@
 import asyncio
-
 from math import ceil
-from pyrogram import filters
+from pyrogram import Client, filters
 from pyrogram.types import InlineKeyboardButton
 from typing import Union, List
 
 from YukkiMusic import app
-
 
 class EqInlineKeyboardButton(InlineKeyboardButton):
     def __eq__(self, other):
@@ -18,15 +16,14 @@ class EqInlineKeyboardButton(InlineKeyboardButton):
     def __gt__(self, other):
         return self.text > other.text
 
-
 def paginate_plugins(page_n, plugin_dict, prefix, chat=None):
     if not chat:
         plugins = sorted(
             [
                 EqInlineKeyboardButton(
-                    x.__NAME__,
+                    x.__name__,
                     callback_data="{}_plugin({})".format(
-                        prefix, x.__NAME__.lower()
+                        prefix, x.__name__.lower()
                     ),
                 )
                 for x in plugin_dict.values()
@@ -36,9 +33,9 @@ def paginate_plugins(page_n, plugin_dict, prefix, chat=None):
         plugins = sorted(
             [
                 EqInlineKeyboardButton(
-                    x.__NAME__,
+                    x.__name__,
                     callback_data="{}_plugin({},{})".format(
-                        prefix, chat, x.__NAME__.lower()
+                        prefix, chat, x.__name__.lower()
                     ),
                 )
                 for x in plugin_dict.values()
@@ -87,6 +84,3 @@ def paginate_plugins(page_n, plugin_dict, prefix, chat=None):
         ]
 
     return pairs
-
-
-
