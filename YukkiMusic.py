@@ -1622,9 +1622,8 @@ async def stopSpam(_, message: Message):
 # help button
 
 import re
-
-from pyrogram import *
-from pyrogram.types import *
+from pyrogram import Client, filters
+from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 
 from BADMUNDA.modules.buttons import *
 from BADMUNDA.modules.inline import *
@@ -1632,51 +1631,47 @@ from BADMUNDA.modules.wrapper import *
 
 
 @app.on_message(
-    filters.command(["help"], ".") & (filters.me | filters.user(SUDO_USER))
+    filters.command("help") & (filters.me | filters.user(SUDO_USER))
 )
 async def inline_help_menu(client, message):
     image = None
     try:
         if image:
-            bot_results = await app.get_inline_bot_results(
-                f"@{bot.me.username}", "help_menu_logo"
+            bot_results = await bot.get_inline_bot_results(
+                bot.me.username, "help_menu_logo"
             )
         else:
-            bot_results = await app.get_inline_bot_results(
-                f"@{bot.me.username}", "help_menu_text"
+            bot_results = await bot.get_inline_bot_results(
+                bot.me.username, "help_menu_text"
             )
-        await app.send_inline_bot_result(
-            chat_id=message.chat.id,
-            query_id=bot_results.query_id,
-            result_id=bot_results.results[0].id,
-        )
-    except Exception:
-        bot_results = await app.get_inline_bot_results(
-            f"@{bot.me.username}", "help_menu_text"
-        )
-        await app.send_inline_bot_result(
+        await bot.send_inline_bot_result(
             chat_id=message.chat.id,
             query_id=bot_results.query_id,
             result_id=bot_results.results[0].id,
         )
     except Exception as e:
         print(e)
-        return
-
+        bot_results = await bot.get_inline_bot_results(
+            bot.me.username, "help_menu_text"
+        )
+        await bot.send_inline_bot_result(
+            chat_id=message.chat.id,
+            query_id=bot_results.query_id,
+            result_id=bot_results.results[0].id,
+        )
     try:
         await message.delete()
-    except:
+    except Exception as e:
         pass
-      
-
 
 @bot.on_callback_query(filters.regex(r"help_(.*?)"))
 async def help_button(client, query):
-    plug_match = re.match(r"help_plugin\((.+?)\)", query.data)
-    prev_match = re.match(r"help_prev\((.+?)\)", query.data)
-    next_match = re.match(r"help_next\((.+?)\)", query.data)
+    plug_match = re.match(r"help_plugin(.+?)", query.data)
+    prev_match = re.match(r"help_prev(.+?)", query.data)
+    next_match = re.match(r"help_next(.+?)", query.data)
     back_match = re.match(r"help_back", query.data)
-    top_text = f"""
+    
+    top_text = """
 **💫 ᴡᴇʟᴄᴏᴍᴇ ᴛᴏ ʜᴇʟᴘ ᴍᴇɴᴜ ᴏᴘ.
 ᴘʙx ᴜsᴇʀʙᴏᴛ  » {__version__} ✨
  
@@ -1689,9 +1684,7 @@ async def help_button(client, query):
     if plug_match:
         plugin = plug_match.group(1)
         text = (
-            "****💫 ᴡᴇʟᴄᴏᴍᴇ ᴛᴏ ʜᴇʟᴘ ᴍᴇɴᴜ ᴏғ \n♨️ ᴘʟᴜɢɪɴ ✨ ** {}\n".format(
-                plugs[plugin].__NAME__
-            )
+            f"****💫 ᴡᴇʟᴄᴏᴍᴇ ᴛᴏ ʜᴇʟᴘ ᴍᴇɴᴜ ᴏғ \n♨️ ᴘʟᴜɢɪɴ ✨ ** {plugs[plugin].__NAME__}\n"
             + plugs[plugin].__MENU__
         )
         key = InlineKeyboardMarkup(
@@ -1704,16 +1697,18 @@ async def help_button(client, query):
             ]
         )
 
-        await bot.edit_inline_text(
-            query.inline_message_id,
+        await bot.edit_message_text(
+            query.message.chat.id,
+            query.message.message_id,
             text=text,
             reply_markup=key,
             disable_web_page_preview=True
         )
     elif prev_match:
         curr_page = int(prev_match.group(1))
-        await bot.edit_inline_text(
-            query.inline_message_id,
+        await bot.edit_message_text(
+            query.message.chat.id,
+            query.message.message_id,
             text=top_text,
             reply_markup=InlineKeyboardMarkup(
                 paginate_plugins(curr_page - 1, plugs, "help")
@@ -1723,8 +1718,9 @@ async def help_button(client, query):
 
     elif next_match:
         next_page = int(next_match.group(1))
-        await bot.edit_inline_text(
-            query.inline_message_id,
+        await bot.edit_message_text(
+            query.message.chat.id,
+            query.message.message_id,
             text=top_text,
             reply_markup=InlineKeyboardMarkup(
                 paginate_plugins(next_page + 1, plugs, "help")
@@ -1733,24 +1729,15 @@ async def help_button(client, query):
         )
 
     elif back_match:
-        await bot.edit_inline_text(
-            query.inline_message_id,
+        await bot.edit_message_text(
+            query.message.chat.id,
+            query.message.message_id,
             text=top_text,
             reply_markup=InlineKeyboardMarkup(
                 paginate_plugins(0, plugs, "help")
             ),
             disable_web_page_preview=True,
         )
-        
-
-
-
-
-
-
-
-
-
 
 
 
