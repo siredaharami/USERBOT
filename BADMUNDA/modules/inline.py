@@ -1,8 +1,8 @@
 import asyncio
 from pyrogram.types import InlineQueryResultCachedPhoto, InlineQueryResultArticle, InlineKeyboardMarkup, InputTextMessageContent
 
-from BADMUNDA.modules.buttons import paginate_plugins
-from BADMUNDA.modules.wrapper import inline_wrapper
+from BADMUNDA.modules.buttons import *
+from BADMUNDA.modules.wrapper import *
 from pyrogram.types import InlineQuery
 from YukkiMusic import __version__
 
