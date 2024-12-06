@@ -1748,40 +1748,38 @@ from pyrogram import Client, filters
 from gtts import gTTS
 import os
 from pytgcalls import PyTgCalls
-from pytgcalls.types import AudioPiped
-from pytgcalls.types.quality import HighQualityAudio
+from pytgcalls.types import Update
 
-# Initialize PyTgCalls for group calls
+# Initialize PyTgCalls
 pycalls = PyTgCalls(app)
 
+
 @pycalls.on_stream_end()
-async def on_stream_end(client, update):
-    """Handle stream end (optional)."""
+async def on_stream_end(client, update: Update):
+    """Handle the end of a stream."""
     chat_id = update.chat_id
     await pycalls.leave_group_call(chat_id)
     print(f"Left call in chat: {chat_id}")
 
-# Command to trigger TTS
-@app.on_message(filters.command("speak", prefixes=["."]) & filters.group)
+
+@app.on_message(filters.command("speak", prefixes=["/"]) & filters.group)
 async def speak_command(client, message):
+    """Convert text to speech and play it in a group call."""
     if len(message.command) < 2:
         await message.reply("Please provide some text to speak.")
         return
 
     text_to_speak = " ".join(message.command[1:])
     
-    # Generate speech from text
+    # Generate TTS audio
     tts = gTTS(text_to_speak, lang="en")
     file_path = "output.mp3"
     tts.save(file_path)
 
-    chat_id = message.chat.id  # Group chat ID
+    chat_id = message.chat.id
     try:
-        # Join group call and play the TTS file
-        await pycalls.join_group_call(
-            chat_id,
-            AudioPiped(file_path, HighQualityAudio())
-        )
+        # Join the group call and play the TTS file
+        await pycalls.join_group_call(chat_id, file_path)
         await message.reply("Started call and playing the TTS audio.")
     except Exception as e:
         await message.reply(f"Error starting call: {e}")
@@ -1789,6 +1787,7 @@ async def speak_command(client, message):
         # Clean up the generated file
         if os.path.exists(file_path):
             os.remove(file_path)
+        
 
 
 
