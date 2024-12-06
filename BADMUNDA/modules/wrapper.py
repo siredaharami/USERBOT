@@ -1,7 +1,7 @@
 from pyrogram import Client
 from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup, InlineQueryResultPhoto, InlineQueryResultArticle, InputTextMessageContent
 from traceback import format_exc
-from YukkiMusic import SUDO_USER as SUDOERS, app
+from YukkiMusic import SUDO_USER as SUDOERS, app, bot
 
 def super_user_only(mystic):
     async def wrapper(client, message):
