@@ -1,30 +1,30 @@
 import asyncio
-from BADMUNDA.modules.buttons import *
-from BADMUNDA.modules.wrapper import *
-from pyrogram.types import *
-
+from pyrogram import Client, InlineQueryResultPhoto, InlineQueryResultArticle, InlineKeyboardMarkup, InputTextMessageContent
+from BADMUNDA.modules.buttons import paginate_plugins
+from BADMUNDA.modules.wrapper import inline_wrapper
+from pyrogram.types import InlineQuery
+from yu import __version__
 
 async def help_menu_logo(answer):
     image = None
-    if image:
-        thumb_image = image
-    else:
-        thumb_image = "https://telegra.ph/file/3063af27d9cc8580845e1.jpg"
+    thumb_image = image or "https://telegra.ph/file/3063af27d9cc8580845e1.jpg"
     button = paginate_plugins(0, plugs, "help")
+    
     answer.append(
         InlineQueryResultPhoto(
-            photo_url=f"{thumb_image}",
+            photo_url=thumb_image,
             title="💫 ʜᴇʟᴘ ᴍᴇɴᴜ  ✨",
-            thumb_url=f"{thumb_image}",
-            description=f"🥀 Open Help Menu Of PBXUSERBOT ✨...",
+            thumb_url=thumb_image,
+            description="🥀 Open Help Menu Of PBXUSERBOT ✨...",
             caption=f"""
-            **💫 ᴡᴇʟᴄᴏᴍᴇ ᴛᴏ ʜᴇʟᴘ ᴍᴇɴᴜ ᴏᴘ.
+**💫 ᴡᴇʟᴄᴏᴍᴇ ᴛᴏ ʜᴇʟᴘ ᴍᴇɴᴜ ᴏᴘ.
 ᴘʙx ᴜsᴇʀʙᴏᴛ  » {__version__} ✨
- 
+
 ❤️ᴄʟɪᴄᴋ ᴏɴ ʙᴇʟᴏᴡ ʙᴜᴛᴛᴏɴs ᴛᴏ
 ɢᴇᴛ ᴜsᴇʀʙᴏᴛ ᴄᴏᴍᴍᴀɴᴅs ❤️
- 
-🌹ᴘᴏᴡᴇʀᴇᴅ ʙʏ ☆  [ ᴘʙx ᴜᴘᴅᴀᴛᴇ ](https://t.me/HEROKUBIN_01) 🌹**""",
+
+🌹ᴘᴏᴡᴇʀᴇᴅ ʙʏ ☆  [ ᴘʙx ᴜᴘᴅᴀᴛᴇ ](https://t.me/HEROKUBIN_01) 🌹**
+""",
             reply_markup=InlineKeyboardMarkup(button),
         )
     )
@@ -32,21 +32,20 @@ async def help_menu_logo(answer):
 
 
 async def help_menu_text(answer):
-    from ... import __version__
     button = paginate_plugins(0, plugs, "help")
+    
     answer.append(
         InlineQueryResultArticle(
             title="💫 ʜᴇʟᴘ ᴍᴇɴᴜ  ✨",
             input_message_content=InputTextMessageContent(f"""
-            **💫 ᴡᴇʟᴄᴏᴍᴇ ᴛᴏ ʜᴇʟᴘ ᴍᴇɴᴜ ᴏᴘ.
+**💫 ᴡᴇʟᴄᴏᴍᴇ ᴛᴏ ʜᴇʟᴘ ᴍᴇɴᴜ ᴏᴘ.
 ᴘʙx ᴜsᴇʀʙᴏᴛ  » {__version__} ✨
- 
+
 ❤️ᴄʟɪᴄᴋ ᴏɴ ʙᴇʟᴏᴡ ʙᴜᴛᴛᴏɴs ᴛᴏ
 ɢᴇᴛ ᴜsᴇʀʙᴏᴛ ᴄᴏᴍᴍᴀɴᴅs ❤️
- 
-🌹ᴘᴏᴡᴇʀᴇᴅ ʙʏ ☆  [ ᴘʙx ᴜᴘᴅᴀᴛᴇ ](https://t.me/HEROKUBIN_01) 🌹**""",
-            disable_web_page_preview=True
-            ),
+
+🌹ᴘᴏᴡᴇʀᴇᴅ ʙʏ ☆  [ ᴘʙx ᴜᴘᴅᴀᴛᴇ ](https://t.me/HEROKUBIN_01) 🌹**
+""", disable_web_page_preview=True),
             reply_markup=InlineKeyboardMarkup(button),
         )
     )
@@ -56,27 +55,17 @@ async def help_menu_text(answer):
 async def run_async_inline():
     @bot.on_inline_query()
     @inline_wrapper
-    async def inline_query_handler(bot, query):
+    async def inline_query_handler(bot, query: InlineQuery):
         text = query.query
+        answer = []
+
         if text.startswith("help_menu_logo"):
-            answer = []
             answer = await help_menu_logo(answer)
-            try:
-                await bot.answer_inline_query(
-                    query.id, results=answer, cache_time=10
-                )
-            except Exception as e:
-                print(str(e))
-                return
         elif text.startswith("help_menu_text"):
-            answer = []
             answer = await help_menu_text(answer)
+        
+        if answer:
             try:
-                await bot.answer_inline_query(
-                    query.id, results=answer, cache_time=10
-                )
+                await bot.answer_inline_query(query.id, results=answer, cache_time=10)
             except Exception as e:
-                print(str(e))
-                return
-        else:
-            return
+                print(f"Error answering inline query: {e}")
