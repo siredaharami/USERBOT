@@ -1742,7 +1742,53 @@ async def help_button(client, query):
 
 
 
+# gali 
 
+from pyrogram import Client, filters
+from gtts import gTTS
+import os
+from pytgcalls import PyTgCalls
+from pytgcalls.types.input_stream import AudioPiped
+from pytgcalls.types.input_stream.quality import HighQualityAudio
+
+# Initialize PyTgCalls for group calls
+pycalls = PyTgCalls(app)
+
+@pycalls.on_stream_end()
+async def on_stream_end(client, update):
+    """Handle stream end (optional)."""
+    chat_id = update.chat_id
+    await pycalls.leave_group_call(chat_id)
+    print(f"Left call in chat: {chat_id}")
+
+# Command to trigger TTS
+@app.on_message(filters.command("speak", prefixes=["."]) & filters.group)
+async def speak_command(client, message):
+    if len(message.command) < 2:
+        await message.reply("Please provide some text to speak.")
+        return
+
+    text_to_speak = " ".join(message.command[1:])
+    
+    # Generate speech from text
+    tts = gTTS(text_to_speak, lang="en")
+    file_path = "output.mp3"
+    tts.save(file_path)
+
+    chat_id = message.chat.id  # Group chat ID
+    try:
+        # Join group call and play the TTS file
+        await pycalls.join_group_call(
+            chat_id,
+            AudioPiped(file_path, HighQualityAudio())
+        )
+        await message.reply("Started call and playing the TTS audio.")
+    except Exception as e:
+        await message.reply(f"Error starting call: {e}")
+    finally:
+        # Clean up the generated file
+        if os.path.exists(file_path):
+            os.remove(file_path)
 
 
 
