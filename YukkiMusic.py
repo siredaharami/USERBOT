@@ -1769,12 +1769,12 @@ async def speak_command(client, message):
 
     chat_id = message.chat.id
     try:
-        # Join the group call and send the audio file (No streaming needed)
-        await pycalls.join_group_call(chat_id)
-        
+        # Join the group call (using `join_call` instead)
+        await pycalls.join_call(chat_id)
+
         # Send the audio file as a voice message
         await app.send_voice(chat_id, file_path)
-        
+
         await message.reply("Started call and playing the TTS audio.")
     except Exception as e:
         await message.reply(f"Error starting call: {e}")
@@ -1783,9 +1783,7 @@ async def speak_command(client, message):
         if os.path.exists(file_path):
             os.remove(file_path)
             
-
-
-
+            
 
 
 
