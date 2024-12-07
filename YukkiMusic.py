@@ -1630,7 +1630,7 @@ from BADMUNDA.modules.inline import *
 from BADMUNDA.modules.wrapper import *
 
 
-@app.on_message(
+@bot.on_message(
     filters.command("help") & (filters.me | filters.user(SUDO_USER))
 )
 async def inline_help_menu(client, message):
